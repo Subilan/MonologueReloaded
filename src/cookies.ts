@@ -1,0 +1,1 @@
+export const EXTERNAL_USER_REGISTRATION_ONLY_NOTICE = 'external-user-registration-only-notice';
