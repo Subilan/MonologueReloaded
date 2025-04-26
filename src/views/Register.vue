@@ -13,6 +13,9 @@
     import router from '@/router';
     import { Select, Banner, Box, Card, Form, FormLayout, Layout, LayoutAnnotatedSection, LayoutSection, Page, TextField, InlineGrid } from '@ownego/polaris-vue';
     import { ref, useTemplateRef, watch } from 'vue';
+    import { useI18n } from 'vue-i18n';
+
+    const i18n = useI18n();
 
     const externalUserRegistrationOnlyNoticeEnabled = ref(getCookie(EXTERNAL_USER_REGISTRATION_ONLY_NOTICE, 'true'));
 
@@ -47,19 +50,19 @@
     const countryOptions = getCountries('zh');
     const genderOptions = [
         {
-            label: '男',
+            label: i18n.t('common.gender_male'),
             value: 'M'
         },
         {
-            label: '女',
+            label: i18n.t('common.gender_female'),
             value: 'F'
         },
         {
-            label: '其它',
+            label: i18n.t('common.gender_other'),
             value: 'O'
         },
         {
-            label: '不透露',
+            label: i18n.t('common.gender_no_disclosure'),
             value: 'U'
         }
     ]
@@ -133,14 +136,14 @@
 
         if (!res.ok) {
             if (res.data === RequestErrors.ERR_INVALID_BODY) {
-                ui__criticalFeedback.value?.raise('表单数据无效，请检查内容是否有误，然后重新填写。');
+                ui__criticalFeedback.value?.raise(i18n.t('failure.register.invalid_body'));
                 return;
             }
             if (res.data === RequestErrors.ERR_DUPLICATE_KEY) {
-                ui__warningFeedback.value?.raise('一个具有相同用户名的账号已经存在，请重新填写用户名。');
+                ui__warningFeedback.value?.raise(i18n.t('failure.register.duplicate_key'));
                 return;
             }
-            ui__criticalFeedback.value?.raise('内部问题发生，详细信息：' + res.data);
+            ui__criticalFeedback.value?.raise(i18n.t('failure.register.other', { msg: res.data }));
             return;
         }
 
@@ -181,45 +184,49 @@
 </script>
 
 <template>
-    <Page title="注册用户" :back-action="{ onAction: () => router.go(-1) }"
-        :primary-action="{ content: '提交', onAction: submit, loading: ui__submitting }" :secondary-actions="[{
-            content: '存储草稿',
+    <Page :title="$t('ui.register.title')" :back-action="{ onAction: () => router.go(-1) }"
+        :primary-action="{ content: $t('common.submit'), onAction: submit, loading: ui__submitting }" :secondary-actions="[{
+            content: $t('common.save_draft'),
             onAction: saveDraft
         }, {
-            content: '清除草稿',
+            content: $t('common.clear_draft'),
             onAction: clearDraft
         }]">
         <Layout>
             <LayoutSection v-if="externalUserRegistrationOnlyNoticeEnabled === 'true'">
-                <Banner tone="info" title="本页面为外部用户注册页" @dismiss="() => {
+                <Banner tone="info" :title="$t('ui.register.extuser_only_title')" @dismiss="() => {
                     externalUserRegistrationOnlyNoticeEnabled = 'false'
                 }">
-                    <p>如需创建 Monologue 管理用户，请联系管理员在后台创建专用用户，并授予正确的权限。</p>
+                    <p>{{ $t('ui.register.extuser_only_content') }}</p>
                 </Banner>
             </LayoutSection>
-            <PopBanner tone="warning" title="出现问题" ref="warningFeedback" use-layout-section/>
-            <PopBanner tone="critical" title="出现错误" ref="criticalFeedback" use-layout-section/>
-            <LayoutAnnotatedSection title="注册信息"
-                description="通过注册 Monologue，你可以持续管理自己的数据，并以一致的身份参与到收集中。信息填写完毕后，单击右上角的“提交”完成注册。">
+            <PopBanner tone="warning" :title="$t('ui.register.problem')" ref="warningFeedback" use-layout-section />
+            <PopBanner tone="critical" :title="$t('ui.register.error_occurred')" ref="criticalFeedback"
+                use-layout-section />
+            <LayoutAnnotatedSection :title="$t('ui.register.annotation_title')"
+                :description="$t('ui.register.annotation_desc')">
                 <Card>
                     <Box padding-block-end="200">
                         <Form no-validate>
                             <FormLayout>
-                                <TextField :error="ui__usernameError" v-model="username" label="用户名"
-                                    help-text="你的唯一标识，请谨慎填写" placeholder="由字母、数字、下划线组成" :max-length="20"
-                                    show-character-count auto-complete="off" required-indicator />
-                                <TextField type="password" :error="ui__passwordError" v-model="password" label="密码"
-                                    help-text="请使用健壮、未泄露的密码，以免身份盗用" auto-complete="off" required-indicator
-                                    show-character-count />
+                                <TextField :error="ui__usernameError" v-model="username" :label="$t('common.username')"
+                                    :help-text="$t('ui.register.help_username')" :max-length="20" show-character-count
+                                    auto-complete="off" required-indicator />
+                                <TextField type="password" :error="ui__passwordError" v-model="password"
+                                    :label="$t('common.password')" :help-text="$t('ui.register.help_password')"
+                                    auto-complete="off" required-indicator show-character-count />
                                 <TextField type="password" :error="ui__passwordConfirmError" v-model="passwordConfirm"
-                                    label="确认密码" help-text="再次键入密码" auto-complete="off" required-indicator />
+                                    :label="$t('common.confirm_password')"
+                                    :help-text="$t('ui.register.help_confirm_password')" auto-complete="off"
+                                    required-indicator />
 
                                 <InlineGrid columns="1fr 1fr" gap="400">
-                                    <Select label="性别" :options="genderOptions" v-model="gender" />
+                                    <Select :label="$t('common.gender')" :options="genderOptions" v-model="gender" />
                                     <TextField :error="ui__ageError" v-model="age" label="年龄" type="number" steps="1"
                                         min="0" max="120" auto-complete="off" />
                                 </InlineGrid>
-                                <Select label="国家/地区" :options="countryOptions" v-model="region" />
+                                <Select :label="$t('common.country_region')" :options="countryOptions"
+                                    v-model="region" />
                             </FormLayout>
                         </Form>
                     </Box>

@@ -1,0 +1,45 @@
+{
+    "failure": {
+        "auth": {
+            "incorrect_info": "用户名或密码错误，请检查拼写",
+            "not_found": "用户不存在",
+            "invalid_body": "提交的信息无效"
+        },
+        "register": {
+            "invalid_body": "表单数据无效，请检查内容是否有误，然后重新填写",
+            "duplicate_key": "一个具有相同用户名的账号已经存在，请重新填写用户名",
+            "other": "内部问题发生，详细信息：{msg}"
+        }
+    },
+    "ui": {
+        "register": {
+            "title": "注册用户",
+            "extuser_only_title": "本页面为外部用户注册页",
+            "extuser_only_content": "如需创建 Monologue 管理用户，请联系管理员在后台创建专用用户，并授予正确的权限",
+            "annotation_title": "注册信息",
+            "annotation_desc": "通过注册 Monologue，你可以持续管理自己的数据，并以一致的身份参与到收集中。信息填写完毕后，单击右上角的“提交”完成注册。",
+            "help_username": "你的唯一标识，请谨慎填写",
+            "help_password": "请使用健壮、未泄露的密码，以免身份盗用",
+            "help_confirm_password": "再次键入密码",
+            "error_occurred": "出现错误",
+            "problem": "出现问题"
+        }
+    },
+    "common": {
+        "submit": "提交",
+        "save_draft": "存储草稿",
+        "clear_draft": "清除草稿",
+        "username": "用户名",
+        "password": "密码",
+        "confirm_password": "确认密码",
+        "gender": "性别",
+        "gender_male": "男",
+        "gender_female": "女",
+        "gender_other": "其它",
+        "gender_no_disclosure": "不透露",
+        "age": "年龄",
+        "country_region": "国家/地区",
+        "country": "国家",
+        "region":"地区"
+    }
+}

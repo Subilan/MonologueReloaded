@@ -1,13 +1,14 @@
 <script setup lang="ts">
-    import { Banner, BlockStack, Box, Button, ButtonGroup, Card, Form, FormLayout, InlineGrid, InlineStack, LayoutSection, Modal, Text, TextContainer, TextField } from '@ownego/polaris-vue';
-    import { onMounted, ref, useTemplateRef, watch } from 'vue';
+    import { BlockStack, Box, Button, ButtonGroup, Form, FormLayout, InlineStack, LayoutSection, Text, TextField } from '@ownego/polaris-vue';
+    import { ref, useTemplateRef, watch } from 'vue';
     import Logo from '@/components/Logo.vue';
     import router from '@/router';
-    import { FAILURE_AUTH_INVALID_BODY, FAILURE_AUTH_USER_NOT_EXIST, FAILURE_AUTH_USERNAME_OR_PASSWORD } from '@/i18n/zh_cn';
-    import type { Tone } from '@/types';
     import checkUser from '@/func/requests/check-user';
     import { RequestErrors } from '@/func/requests/consts';
-import PopBanner from '@/components/PopBanner.vue';
+    import PopBanner from '@/components/PopBanner.vue';
+    import { useI18n } from 'vue-i18n';
+
+    const i18n = useI18n();
 
     const username = ref('');
     const password = ref('');
@@ -58,9 +59,9 @@ import PopBanner from '@/components/PopBanner.vue';
         ui__loginBtnLoading.value = false;
 
         if (!res.ok) {
-            if (res.data === RequestErrors.ERR_INVALID_BODY) ui__loginFeedback.value?.raise(FAILURE_AUTH_INVALID_BODY);
-            if (res.data === RequestErrors.ERR_NOT_FOUND) ui__loginFeedback.value?.raise(FAILURE_AUTH_USER_NOT_EXIST);
-            if (res.data === RequestErrors.ERR_INCORRECT_INFO) ui__loginFeedback.value?.raise(FAILURE_AUTH_USERNAME_OR_PASSWORD);
+            if (res.data === RequestErrors.ERR_INVALID_BODY) ui__loginFeedback.value?.raise(i18n.t('failure.auth.invalid_body'));
+            if (res.data === RequestErrors.ERR_NOT_FOUND) ui__loginFeedback.value?.raise(i18n.t('failure.auth.not_found'));
+            if (res.data === RequestErrors.ERR_INCORRECT_INFO) ui__loginFeedback.value?.raise(i18n.t('failure.auth.incorrect_info'));
             return;
         }
 
@@ -87,7 +88,7 @@ import PopBanner from '@/components/PopBanner.vue';
                                 </Text>
                             </BlockStack>
                             <Box padding-block-start="200">
-                                <PopBanner tone="warning" ref="loginFeedback"/>
+                                <PopBanner tone="warning" ref="loginFeedback" />
                             </Box>
                             <Box padding-block-start="200">
                                 <Form no-validate @submit="submit">
