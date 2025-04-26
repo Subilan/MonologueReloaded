@@ -1,10 +1,13 @@
 <script setup lang="ts">
     import { Banner, BlockStack, Box, Button, ButtonGroup, Card, Form, FormLayout, InlineGrid, InlineStack, LayoutSection, Modal, Text, TextContainer, TextField } from '@ownego/polaris-vue';
-    import { onMounted, ref, watch } from 'vue';
+    import { onMounted, ref, useTemplateRef, watch } from 'vue';
     import Logo from '@/components/Logo.vue';
     import router from '@/router';
-    import { FAILURE_AUTH_USERNAME_OR_PASSWORD } from '@/i18n/zh_cn';
+    import { FAILURE_AUTH_INVALID_BODY, FAILURE_AUTH_USER_NOT_EXIST, FAILURE_AUTH_USERNAME_OR_PASSWORD } from '@/i18n/zh_cn';
     import type { Tone } from '@/types';
+    import checkUser from '@/func/requests/check-user';
+    import { RequestErrors } from '@/func/requests/consts';
+import PopBanner from '@/components/PopBanner.vue';
 
     const username = ref('');
     const password = ref('');
@@ -14,16 +17,7 @@
 
     const ui__loginBtnLoading = ref(false);
 
-    const ui__loginFailure = ref(false);
-    const ui__loginFailureTone = ref('warning');
-    const ui__loginFailureCause = ref('');
-
-    function raiseError(cause: string, tone: Tone = 'warning') {
-        ui__loginFailure.value = true;
-        ui__loginFailureTone.value = tone;
-        ui__loginFailureCause.value = cause;
-        ui__loginBtnLoading.value = false;
-    }
+    const ui__loginFeedback = useTemplateRef('loginFeedback');
 
     function checkfield__username() {
         if (username.value.trim().length === 0) {
@@ -49,12 +43,26 @@
         return ![checkfield__username(), checkfield__password()].includes(false);
     }
 
-    function submit() {
+    async function submit() {
         if (!check()) return;
 
         ui__loginBtnLoading.value = true;
 
-        raiseError(FAILURE_AUTH_USERNAME_OR_PASSWORD);
+        const res = await checkUser({
+            username: username.value,
+            password: password.value
+        });
+
+        ui__loginBtnLoading.value = false;
+
+        if (!res.ok) {
+            if (res.data === RequestErrors.ERR_INVALID_BODY) ui__loginFeedback.value?.raise(FAILURE_AUTH_INVALID_BODY);
+            if (res.data === RequestErrors.ERR_NOT_FOUND) ui__loginFeedback.value?.raise(FAILURE_AUTH_USER_NOT_EXIST);
+            if (res.data === RequestErrors.ERR_INCORRECT_INFO) ui__loginFeedback.value?.raise(FAILURE_AUTH_USERNAME_OR_PASSWORD);
+            return;
+        }
+
+        alert('登录成功');
     }
 
     watch(username, v => checkfield__username());
@@ -76,12 +84,8 @@
                                     登入仪表盘
                                 </Text>
                             </BlockStack>
-                            <Box padding-block-start="200" v-if="ui__loginFailure">
-                                <Banner tone="warning">
-                                    <Text as="p">
-                                        {{ ui__loginFailureCause }}
-                                    </Text>
-                                </Banner>
+                            <Box padding-block-start="200">
+                                <PopBanner tone="warning" ref="loginFeedback"/>
                             </Box>
                             <Box padding-block-start="200">
                                 <Form no-validate @submit="submit">
@@ -116,7 +120,7 @@
 <style lang="scss">
 .constraint__authLoginCard {
     @media (min-width: 30.625em) {
-        width: 500px;
+        width: 300px;
     }
 
     @media (max-width: 30.6225em) {

@@ -1,14 +1,18 @@
 <script setup lang="ts">
+    import PopBanner from '@/components/PopBanner.vue';
+    import { RegexUtil } from '@/consts';
     import { EXTERNAL_USER_REGISTRATION_ONLY_NOTICE } from '@/cookies';
     import getCookie from '@/func/getCookie';
     import getCountries from '@/func/getCountries';
     import getStorage from '@/func/getStorage';
+    import { RequestErrors } from '@/func/requests/consts';
+    import createUser from '@/func/requests/create-user';
     import setCookie from '@/func/setCookie';
     import setStorage from '@/func/setStorage';
-    import useStorage from '@/func/useStorage';
+    import type { Model } from '@/models/basic';
     import router from '@/router';
     import { Select, Banner, Box, Card, Form, FormLayout, Layout, LayoutAnnotatedSection, LayoutSection, Page, TextField, InlineGrid } from '@ownego/polaris-vue';
-    import { computed, ref, watch } from 'vue';
+    import { ref, useTemplateRef, watch } from 'vue';
 
     const externalUserRegistrationOnlyNoticeEnabled = ref(getCookie(EXTERNAL_USER_REGISTRATION_ONLY_NOTICE, 'true'));
 
@@ -19,15 +23,17 @@
     const username = ref('');
     const password = ref('');
     const email = ref('');
-    const region = ref('');
+    const region = ref('Andorra');
     const age = ref('');
-    const gender = ref('');
+    const gender = ref('M');
     const passwordConfirm = ref('');
 
     const ui__usernameError = ref('');
     const ui__passwordError = ref('');
     const ui__ageError = ref('');
     const ui__passwordConfirmError = ref('');
+
+    const ui__submitting = ref(false);
 
     if (draftGet('saved') === 'true') {
         username.value = draftGet('username');
@@ -59,8 +65,7 @@
     ]
 
     function check__username() {
-        const usernameRegex = /^[0-9A-Za-z_-]{3,20}$/;
-        if (!usernameRegex.test(username.value)) {
+        if (!RegexUtil.username.test(username.value)) {
             ui__usernameError.value = '用户名只能包含数字、字母、下划线、连字符；不少于三位'
             return false;
         }
@@ -70,8 +75,7 @@
     }
 
     function check__password() {
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9@$!%*#?&+-\/\\\.\^\(\)\[\]]{8,}$/
-        if (!passwordRegex.test(password.value)) {
+        if (!RegexUtil.password.test(password.value)) {
             ui__passwordError.value = '密码至少包含一个字母和一个数字；不少于八位';
             return false;
         }
@@ -109,8 +113,38 @@
         return [check__username(), check__password(), check__passwordConfirm(), check__age()].every(x => x);
     }
 
-    function submit() {
+    async function submit() {
         if (!check()) return;
+
+        ui__criticalFeedback.value?.clear();
+        ui__warningFeedback.value?.clear();
+
+        ui__submitting.value = true;
+
+        const res = await createUser({
+            username: username.value,
+            password: password.value,
+            age: Number(age.value),
+            gender: gender.value as Model.Gender,
+            region: region.value as Model.Region
+        });
+
+        ui__submitting.value = false;
+
+        if (!res.ok) {
+            if (res.data === RequestErrors.ERR_INVALID_BODY) {
+                ui__criticalFeedback.value?.raise('表单数据无效，请检查内容是否有误，然后重新填写。');
+                return;
+            }
+            if (res.data === RequestErrors.ERR_DUPLICATE_KEY) {
+                ui__warningFeedback.value?.raise('一个具有相同用户名的账号已经存在，请重新填写用户名。');
+                return;
+            }
+            ui__criticalFeedback.value?.raise('内部问题发生，详细信息：' + res.data);
+            return;
+        }
+
+        alert('注册成功')
     }
 
     function draftSave(name: string, value: string) {
@@ -137,6 +171,9 @@
         alert('草稿已清除');
     }
 
+    const ui__warningFeedback = useTemplateRef('warningFeedback');
+    const ui__criticalFeedback = useTemplateRef('criticalFeedback');
+
     watch(username, v => check__username());
     watch(password, v => check__password());
     watch(age, v => check__age());
@@ -145,7 +182,7 @@
 
 <template>
     <Page title="注册用户" :back-action="{ onAction: () => router.go(-1) }"
-        :primary-action="{ content: '提交', onAction: submit }" :secondary-actions="[{
+        :primary-action="{ content: '提交', onAction: submit, loading: ui__submitting }" :secondary-actions="[{
             content: '存储草稿',
             onAction: saveDraft
         }, {
@@ -160,6 +197,8 @@
                     <p>如需创建 Monologue 管理用户，请联系管理员在后台创建专用用户，并授予正确的权限。</p>
                 </Banner>
             </LayoutSection>
+            <PopBanner tone="warning" title="出现问题" ref="warningFeedback" use-layout-section/>
+            <PopBanner tone="critical" title="出现错误" ref="criticalFeedback" use-layout-section/>
             <LayoutAnnotatedSection title="注册信息"
                 description="通过注册 Monologue，你可以持续管理自己的数据，并以一致的身份参与到收集中。信息填写完毕后，单击右上角的“提交”完成注册。">
                 <Card>
@@ -170,10 +209,10 @@
                                     help-text="你的唯一标识，请谨慎填写" placeholder="由字母、数字、下划线组成" :max-length="20"
                                     show-character-count auto-complete="off" required-indicator />
                                 <TextField type="password" :error="ui__passwordError" v-model="password" label="密码"
-                                    help-text="请使用健壮、未泄露的密码，以免身份盗用" auto-complete="off"
-                                    required-indicator show-character-count />
-                                <TextField type="password" :error="ui__passwordConfirmError" v-model="passwordConfirm" label="确认密码"
-                                    help-text="再次键入密码" auto-complete="off" required-indicator />
+                                    help-text="请使用健壮、未泄露的密码，以免身份盗用" auto-complete="off" required-indicator
+                                    show-character-count />
+                                <TextField type="password" :error="ui__passwordConfirmError" v-model="passwordConfirm"
+                                    label="确认密码" help-text="再次键入密码" auto-complete="off" required-indicator />
 
                                 <InlineGrid columns="1fr 1fr" gap="400">
                                     <Select label="性别" :options="genderOptions" v-model="gender" />
