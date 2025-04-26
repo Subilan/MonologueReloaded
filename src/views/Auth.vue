@@ -46,6 +46,8 @@ import PopBanner from '@/components/PopBanner.vue';
     async function submit() {
         if (!check()) return;
 
+        ui__loginFeedback.value?.clear();
+
         ui__loginBtnLoading.value = true;
 
         const res = await checkUser({
