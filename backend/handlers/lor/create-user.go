@@ -17,18 +17,26 @@ func HandleCreateUser(c *gin.Context) {
 		return
 	}
 
-	result := utils.Db.FirstOrCreate(&dbmodels.ExtUser{
+	var dest dbmodels.ExtUser
+
+	result := utils.Db.Where(dbmodels.ExtUser{
+		ExtUser: models.ExtUser{
+			LoginExtUser: models.LoginExtUser{
+				Username: obj.LoginExtUser.Username,
+			},
+		},
+	}).Attrs(dbmodels.ExtUser{
 		ExtUser:      obj,
 		Model:        gorm.Model{},
 		PasswordHash: string(utils.BcryptPassword(obj.Password)),
-	})
+	}).FirstOrCreate(&dest)
 
 	if result.Error != nil {
 		utils.ERR(result.Error.Error(), c)
 		return
 	}
 
-	if result.RowsAffected != 1 {
+	if result.RowsAffected == 0 {
 		utils.BAD(consts.DuplicateKey, c)
 		return
 	}
