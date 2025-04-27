@@ -33,10 +33,16 @@
             "login_into_dashboard": "登入仪表盘",
             "error_username": "用户名必填",
             "error_password": "密码必填"
+        },
+        "form_overall": {
+            "emptystate_title": "暂未创建表单",
+            "emptystate_desc": "已创建的表单将会显示在这里。单击右上角“新建”开始创建表单。"
         }
     },
     "common": {
         "submit": "提交",
+        "create": "创建",
+        "new": "新建",
         "save_draft": "存储草稿",
         "clear_draft": "清除草稿",
         "username": "用户名",
@@ -53,6 +59,8 @@
         "region":"地区",
         "login": "登录",
         "register": "注册",
-        "feedback": "反馈"
+        "feedback": "反馈",
+        "overall": "总览",
+        "form": "表单"
     }
 }

@@ -19,6 +19,16 @@ const router = createRouter({
       component: () => import('@/views/Register.vue')
     },
     {
+      path: '/form/overall',
+      name: 'form-overall',
+      component: () => import('@/views/form/Overall.vue')
+    },
+    {
+      path: '/form/builder',
+      name: 'form-builder',
+      component: () => import('@/views/form/Builder.vue')
+    },
+    {
       path: '/:any(.*)',
       name: 'error-404',
       component: () => import('@/views/404.vue')

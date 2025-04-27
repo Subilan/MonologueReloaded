@@ -1,5 +1,5 @@
 
-import type { Model } from "./basic";
+import type { Model } from "./base/basic";
 import type LoginUser from "./LoginUser";
 
 export default interface ExtUser extends LoginUser {
