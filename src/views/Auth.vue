@@ -6,9 +6,9 @@
     import checkUser from '@/func/requests/check-user';
     import { RequestErrors } from '@/func/requests/consts';
     import PopBanner from '@/components/PopBanner.vue';
-    import { useI18n } from 'vue-i18n';
+    import useLang from '@/func/useLang';
 
-    const i18n = useI18n();
+    const { t, d, n } = useLang();
 
     const username = ref('');
     const password = ref('');
@@ -22,7 +22,7 @@
 
     function checkfield__username() {
         if (username.value.trim().length === 0) {
-            ui__usernameError.value = '用户名必填';
+            ui__usernameError.value = t('ui.login.error_username');
             return false;
         }
 
@@ -32,7 +32,7 @@
 
     function checkfield__password() {
         if (password.value.trim().length === 0) {
-            ui__passwordError.value = '密码必填';
+            ui__passwordError.value = t('ui.login.error_password');
             return false;
         }
 
@@ -59,9 +59,9 @@
         ui__loginBtnLoading.value = false;
 
         if (!res.ok) {
-            if (res.data === RequestErrors.ERR_INVALID_BODY) ui__loginFeedback.value?.raise(i18n.t('failure.auth.invalid_body'));
-            if (res.data === RequestErrors.ERR_NOT_FOUND) ui__loginFeedback.value?.raise(i18n.t('failure.auth.not_found'));
-            if (res.data === RequestErrors.ERR_INCORRECT_INFO) ui__loginFeedback.value?.raise(i18n.t('failure.auth.incorrect_info'));
+            if (res.data === RequestErrors.ERR_INVALID_BODY) ui__loginFeedback.value?.raise(t('failure.auth.invalid_body'));
+            if (res.data === RequestErrors.ERR_NOT_FOUND) ui__loginFeedback.value?.raise(t('failure.auth.not_found'));
+            if (res.data === RequestErrors.ERR_INCORRECT_INFO) ui__loginFeedback.value?.raise(t('failure.auth.incorrect_info'));
             return;
         }
 
@@ -84,7 +84,7 @@
                                     <Logo />
                                 </Text>
                                 <Text variant="bodyMd" as="p">
-                                    登入仪表盘
+                                    {{ t('ui.login.login_into_dashboard') }}
                                 </Text>
                             </BlockStack>
                             <Box padding-block-start="200">
@@ -93,9 +93,9 @@
                             <Box padding-block-start="200">
                                 <Form no-validate @submit="submit">
                                     <FormLayout>
-                                        <TextField :error="ui__usernameError" required-indicator size="slim" label="用户名"
+                                        <TextField :error="ui__usernameError" required-indicator size="slim" :label="t('common.username')"
                                             auto-complete="off" v-model="username" />
-                                        <TextField :error="ui__passwordError" required-indicator size="slim" label="密码"
+                                        <TextField :error="ui__passwordError" required-indicator size="slim" :label="t('common.password')"
                                             type="password" auto-complete="off" v-model="password" />
                                     </FormLayout>
                                 </Form>
@@ -104,10 +104,10 @@
                                 <InlineStack align="end">
                                     <ButtonGroup>
                                         <Button :loading="ui__loginBtnLoading" @click="submit" variant="primary">
-                                            登录
+                                            {{ t('common.login') }}
                                         </Button>
                                         <Button @click="router.push({ name: 'register' })">
-                                            注册
+                                            {{ t('common.register') }}
                                         </Button>
                                     </ButtonGroup>
                                 </InlineStack>

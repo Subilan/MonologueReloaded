@@ -11,7 +11,9 @@ import '@ownego/polaris-vue/dist/style.css';
 import LocaleZh from '@/i18n/zh_cn.json';
 import { createI18n } from 'vue-i18n';
 
-const i18n = createI18n({
+type MessageSchema = typeof LocaleZh;
+
+const i18n = createI18n<[MessageSchema], 'zh'>({
     locale: 'zh',
     messages: {
         zh: LocaleZh

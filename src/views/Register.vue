@@ -9,13 +9,14 @@
     import createUser from '@/func/requests/create-user';
     import setCookie from '@/func/setCookie';
     import setStorage from '@/func/setStorage';
+    import useLang from '@/func/useLang';
     import type { Model } from '@/models/basic';
     import router from '@/router';
     import { Select, Banner, Box, Card, Form, FormLayout, Layout, LayoutAnnotatedSection, LayoutSection, Page, TextField, InlineGrid } from '@ownego/polaris-vue';
     import { ref, useTemplateRef, watch } from 'vue';
     import { useI18n } from 'vue-i18n';
 
-    const i18n = useI18n();
+    const { t, d, n } = useLang();
 
     const externalUserRegistrationOnlyNoticeEnabled = ref(getCookie(EXTERNAL_USER_REGISTRATION_ONLY_NOTICE, 'true'));
 
@@ -50,26 +51,26 @@
     const countryOptions = getCountries('zh');
     const genderOptions = [
         {
-            label: i18n.t('common.gender_male'),
+            label: t('common.gender_male'),
             value: 'M'
         },
         {
-            label: i18n.t('common.gender_female'),
+            label: t('common.gender_female'),
             value: 'F'
         },
         {
-            label: i18n.t('common.gender_other'),
+            label: t('common.gender_other'),
             value: 'O'
         },
         {
-            label: i18n.t('common.gender_no_disclosure'),
+            label: t('common.gender_no_disclosure'),
             value: 'U'
         }
     ]
 
     function check__username() {
         if (!RegexUtil.username.test(username.value)) {
-            ui__usernameError.value = '用户名只能包含数字、字母、下划线、连字符；不少于三位'
+            ui__usernameError.value = t('ui.register.error_username');
             return false;
         }
 
@@ -79,7 +80,7 @@
 
     function check__password() {
         if (!RegexUtil.password.test(password.value)) {
-            ui__passwordError.value = '密码至少包含一个字母和一个数字；不少于八位';
+            ui__passwordError.value = t('ui.register.error_password');
             return false;
         }
 
@@ -89,12 +90,12 @@
 
     function check__passwordConfirm() {
         if (passwordConfirm.value !== password.value) {
-            ui__passwordConfirmError.value = '两次输入不匹配';
+            ui__passwordConfirmError.value = t('ui.register.error_password_confirm');
             return false;
         }
 
         if (passwordConfirm.value.trim() === '') {
-            ui__passwordConfirmError.value = '不合格的密码';
+            ui__passwordConfirmError.value = t('ui.register.error_unqualified_password');
             return false;
         }
 
@@ -105,7 +106,7 @@
     function check__age() {
         const parsed = Number(age.value);
         if (isNaN(parsed) || parsed < 0 || parsed > 120 || age.value.includes('-') || age.value.trim().length === 0) {
-            ui__ageError.value = '不正确的年龄';
+            ui__ageError.value = t('ui.register.error_age')
             return false;
         }
         ui__ageError.value = '';
@@ -136,14 +137,14 @@
 
         if (!res.ok) {
             if (res.data === RequestErrors.ERR_INVALID_BODY) {
-                ui__criticalFeedback.value?.raise(i18n.t('failure.register.invalid_body'));
+                ui__criticalFeedback.value?.raise(t('failure.register.invalid_body'));
                 return;
             }
             if (res.data === RequestErrors.ERR_DUPLICATE_KEY) {
-                ui__warningFeedback.value?.raise(i18n.t('failure.register.duplicate_key'));
+                ui__warningFeedback.value?.raise(t('failure.register.duplicate_key'));
                 return;
             }
-            ui__criticalFeedback.value?.raise(i18n.t('failure.register.other', { msg: res.data }));
+            ui__criticalFeedback.value?.raise(t('failure.register.other', { msg: res.data }));
             return;
         }
 
@@ -184,48 +185,48 @@
 </script>
 
 <template>
-    <Page :title="$t('ui.register.title')" :back-action="{ onAction: () => router.go(-1) }"
-        :primary-action="{ content: $t('common.submit'), onAction: submit, loading: ui__submitting }" :secondary-actions="[{
-            content: $t('common.save_draft'),
+    <Page :title="t('ui.register.title')" :back-action="{ onAction: () => router.go(-1) }"
+        :primary-action="{ content: t('common.submit'), onAction: submit, loading: ui__submitting }" :secondary-actions="[{
+            content: t('common.save_draft'),
             onAction: saveDraft
         }, {
-            content: $t('common.clear_draft'),
+            content: t('common.clear_draft'),
             onAction: clearDraft
         }]">
         <Layout>
             <LayoutSection v-if="externalUserRegistrationOnlyNoticeEnabled === 'true'">
-                <Banner tone="info" :title="$t('ui.register.extuser_only_title')" @dismiss="() => {
+                <Banner tone="info" :title="t('ui.register.extuser_only_title')" @dismiss="() => {
                     externalUserRegistrationOnlyNoticeEnabled = 'false'
                 }">
-                    <p>{{ $t('ui.register.extuser_only_content') }}</p>
+                    <p>{{ t('ui.register.extuser_only_content') }}</p>
                 </Banner>
             </LayoutSection>
-            <PopBanner tone="warning" :title="$t('ui.register.problem')" ref="warningFeedback" use-layout-section />
-            <PopBanner tone="critical" :title="$t('ui.register.error_occurred')" ref="criticalFeedback"
+            <PopBanner tone="warning" :title="t('ui.register.problem')" ref="warningFeedback" use-layout-section />
+            <PopBanner tone="critical" :title="t('ui.register.error_occurred')" ref="criticalFeedback"
                 use-layout-section />
-            <LayoutAnnotatedSection :title="$t('ui.register.annotation_title')"
-                :description="$t('ui.register.annotation_desc')">
+            <LayoutAnnotatedSection :title="t('ui.register.annotation_title')"
+                :description="t('ui.register.annotation_desc')">
                 <Card>
                     <Box padding-block-end="200">
                         <Form no-validate>
                             <FormLayout>
-                                <TextField :error="ui__usernameError" v-model="username" :label="$t('common.username')"
-                                    :help-text="$t('ui.register.help_username')" :max-length="20" show-character-count
+                                <TextField :error="ui__usernameError" v-model="username" :label="t('common.username')"
+                                    :help-text="t('ui.register.help_username')" :max-length="20" show-character-count
                                     auto-complete="off" required-indicator />
                                 <TextField type="password" :error="ui__passwordError" v-model="password"
-                                    :label="$t('common.password')" :help-text="$t('ui.register.help_password')"
+                                    :label="t('common.password')" :help-text="t('ui.register.help_password')"
                                     auto-complete="off" required-indicator show-character-count />
                                 <TextField type="password" :error="ui__passwordConfirmError" v-model="passwordConfirm"
-                                    :label="$t('common.confirm_password')"
-                                    :help-text="$t('ui.register.help_confirm_password')" auto-complete="off"
+                                    :label="t('common.password_confirm')"
+                                    :help-text="t('ui.register.help_password_confirm')" auto-complete="off"
                                     required-indicator />
 
                                 <InlineGrid columns="1fr 1fr" gap="400">
-                                    <Select :label="$t('common.gender')" :options="genderOptions" v-model="gender" />
+                                    <Select :label="t('common.gender')" :options="genderOptions" v-model="gender" />
                                     <TextField :error="ui__ageError" v-model="age" label="年龄" type="number" steps="1"
                                         min="0" max="120" auto-complete="off" />
                                 </InlineGrid>
-                                <Select :label="$t('common.country_region')" :options="countryOptions"
+                                <Select :label="t('common.country_region')" :options="countryOptions"
                                     v-model="region" />
                             </FormLayout>
                         </Form>

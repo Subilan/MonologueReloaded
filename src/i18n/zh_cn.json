@@ -20,9 +20,19 @@
             "annotation_desc": "通过注册 Monologue，你可以持续管理自己的数据，并以一致的身份参与到收集中。信息填写完毕后，单击右上角的“提交”完成注册。",
             "help_username": "你的唯一标识，请谨慎填写",
             "help_password": "请使用健壮、未泄露的密码，以免身份盗用",
-            "help_confirm_password": "再次键入密码",
+            "help_password_confirm": "再次键入密码",
             "error_occurred": "出现错误",
-            "problem": "出现问题"
+            "problem": "出现问题",
+            "error_username": "用户名只能包含数字、字母、下划线、连字符；不少于三位",
+            "error_password": "密码至少包含一个字母和一个数字；不少于八位",
+            "error_password_confirm": "两次输入不匹配",
+            "error_unqualified_password": "不合格的密码",
+            "error_age": "不正确的年龄"
+        },
+        "login": {
+            "login_into_dashboard": "登入仪表盘",
+            "error_username": "用户名必填",
+            "error_password": "密码必填"
         }
     },
     "common": {
@@ -31,7 +41,7 @@
         "clear_draft": "清除草稿",
         "username": "用户名",
         "password": "密码",
-        "confirm_password": "确认密码",
+        "password_confirm": "确认密码",
         "gender": "性别",
         "gender_male": "男",
         "gender_female": "女",
@@ -40,6 +50,9 @@
         "age": "年龄",
         "country_region": "国家/地区",
         "country": "国家",
-        "region":"地区"
+        "region":"地区",
+        "login": "登录",
+        "register": "注册",
+        "feedback": "反馈"
     }
 }
