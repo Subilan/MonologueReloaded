@@ -34,9 +34,5 @@
     @media (max-width: 30.6225em) {
         width: 80%;
     }
-
-    img {
-        image-rendering: pixelated;
-    }
 }
 </style>
