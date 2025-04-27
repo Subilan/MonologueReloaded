@@ -1,6 +1,6 @@
 <script lang="ts" setup>
     import type { SelectOption } from '@/models/form/Select';
-    import { computed, ref } from 'vue';
+    import { computed, ref, type PropType } from 'vue';
     import { Select } from '@ownego/polaris-vue';
     import FormElement from '../FormElement.vue';
 
@@ -18,17 +18,16 @@
         },
         helperText: {
             type: String
+        },
+        options: {
+            type: Object as PropType<SelectOption[]>
         }
     });
 
     const selected = ref('');
 
-    const options = computed(() => {
-        let base: SelectOption[] = [
-            { label: 'Today', value: 'today' },
-            { label: 'Yesterday', value: 'yesterday' },
-            { label: 'Last 7 days', value: 'lastWeek' },
-        ];
+    const finalOptions = computed(() => {
+        let base = props.options;
 
         return base;
     });
@@ -44,6 +43,6 @@
 
 <template>
     <FormElement :title="title" :index="index" :description="description">
-        <Select :options="options" v-model="selected" :help-text="helperText"/>
+        <Select :options="finalOptions" v-model="selected" :help-text="helperText"/>
     </FormElement>
 </template>

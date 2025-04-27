@@ -13,6 +13,9 @@
             type: Number,
             required: true
         },
+        description: {
+            type: String
+        },
         multiple: {
             type: Boolean,
             default: false,
@@ -25,9 +28,6 @@
             type: String,
             default: 'Other'
         },
-        description: {
-            type: String
-        }
     });
 
     const selected = ref(['']);
