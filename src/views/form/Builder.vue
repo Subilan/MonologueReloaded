@@ -1,45 +1,71 @@
 <script setup lang="ts">
+  import CardSectionTitle from '@/components/CardSectionTitle.vue';
   import CardTitle from '@/components/CardTitle.vue';
   import Draggable from '@/components/Draggable.vue';
   import Choice from '@/components/form-elements/Choice.vue';
+  import ParagraphInput from '@/components/form-elements/ParagraphInput.vue';
   import Select from '@/components/form-elements/Select.vue';
   import TextInput from '@/components/form-elements/TextInput.vue';
   import FormElementShortcut from '@/components/FormElementShortcut.vue';
-import { CheckboxIcon, CursorOptionIcon } from '@/icons';
+  import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
+  import { IconDropdown, IconMultipleChoice, IconTextInput, IconSingleChoice, IconParagraphInput } from '@/icons';
   import router from '@/router';
   import { BlockStack, Box, Card, Icon, InlineGrid, Layout, LayoutSection, Page, Text } from '@ownego/polaris-vue';
   import { useTemplateRef } from 'vue';
 
   const exampleChoiceRef = useTemplateRef('exampleChoice');
   const exampleSelect = useTemplateRef('exampleSelect');
+  const exampleParagraphInput = useTemplateRef('exampleParagraphInput');
 
   async function save() {
-    console.log(exampleSelect.value?.get());
+    console.log(exampleParagraphInput.value?.get());
   }
+
 </script>
 
 <template>
-  <Page full-width title="创建问卷" :back-action="{ onAction() { router.go(-1) } }" :primary-action="{
-    content: '保存',
-    onAction: save
-  }">
+  <Page full-width style="max-width: 2000px;" title="创建问卷" :back-action="{ onAction() { router.go(-1) } }"
+    :primary-action="{
+      content: '保存',
+      onAction: save
+    }">
     <Layout>
       <LayoutSection>
-        <InlineGrid columns="1fr 2fr 1fr" gap="400" align-items="start">
-          <Card>
-            <CardTitle>
+        <InlineGrid columns="1fr 3fr 1fr" gap="400" align-items="start">
+          <Card style="z-index: var(--p-z-index-1);">
+            <CardTitle no-padding-block-end>
               问卷控件
             </CardTitle>
-            <InlineGrid columns="1fr 1fr" gap="400">
+            <CardSectionTitle>
+              选择
+            </CardSectionTitle>
+            <FormElementShortcutContainer>
               <FormElementShortcut>
-                <Icon :source="CursorOptionIcon" />
+                <Icon :source="IconSingleChoice" />
                 单选题
               </FormElementShortcut>
               <FormElementShortcut>
-                <Icon :source="CheckboxIcon"/>
+                <Icon :source="IconMultipleChoice" />
                 多选题
               </FormElementShortcut>
-            </InlineGrid>
+              <FormElementShortcut>
+                <Icon :source="IconDropdown" />
+                下拉选择
+              </FormElementShortcut>
+            </FormElementShortcutContainer>
+            <CardSectionTitle>
+              填空
+            </CardSectionTitle>
+            <FormElementShortcutContainer>
+              <FormElementShortcut>
+                <Icon :source="IconTextInput" />
+                简单填空
+              </FormElementShortcut>
+              <FormElementShortcut>
+                <Icon :source="IconParagraphInput"/>
+                段落填空
+              </FormElementShortcut>
+            </FormElementShortcutContainer>
           </Card>
           <BlockStack gap="400">
             <Draggable>
@@ -58,6 +84,7 @@ import { CheckboxIcon, CursorOptionIcon } from '@/icons';
                 },
               ]
                 " />
+            <ParagraphInput :template="`Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [] and my favorite singer is [].`" ref="exampleParagraphInput" title="示例段落填空题" :index="4" />
           </BlockStack>
           <Card>
             <CardTitle>

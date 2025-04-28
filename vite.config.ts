@@ -10,7 +10,9 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
-    svgLoader()
+    svgLoader({
+      defaultImport: 'raw'
+    })
   ],
   resolve: {
     alias: {

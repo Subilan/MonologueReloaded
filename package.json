@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@mdi/svg": "^7.4.47",
     "@ownego/polaris-vue": "^2.1.28",
     "@shopify/polaris-icons": "^9.3.1",
     "@types/js-cookie": "^3.0.6",

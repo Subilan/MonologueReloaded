@@ -1,7 +1,13 @@
-import CursorOptionIcon from '@shopify/polaris-icons/dist/svg/CursorOptionIcon.svg';
-import CheckboxIcon from '@shopify/polaris-icons/dist/svg/CheckboxIcon.svg';
+import RadioBoxMarked from '@mdi/svg/svg/radiobox-marked.svg';
+import CheckboxOutline from '@mdi/svg/svg/checkbox-outline.svg';
+import ChevronDownCircleOutline from '@mdi/svg/svg/chevron-down-circle-outline.svg';
+import Text from '@mdi/svg/svg/text.svg';
+import FormTextbox from '@mdi/svg/svg/form-textbox.svg';
 
 export {
-    CursorOptionIcon,
-    CheckboxIcon
+    RadioBoxMarked as IconSingleChoice,
+    CheckboxOutline as IconMultipleChoice,
+    ChevronDownCircleOutline as IconDropdown,
+    Text as IconTextInput,
+    FormTextbox as IconParagraphInput
 }

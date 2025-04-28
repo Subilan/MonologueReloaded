@@ -17,7 +17,7 @@
             type: String
         },
         type: {
-            type: Object as PropType<"number" | "text" | "search" | "url" | "email" | "tel" | "time" | "integer" | "password" | "date" | "datetime-local" | "month" | "week" | "currency" | undefined>,
+            type: String as PropType<"number" | "text" | "search" | "url" | "email" | "tel" | "time" | "integer" | "password" | "date" | "datetime-local" | "month" | "week" | "currency" | undefined>,
             default: 'text'
         },
         max: {
@@ -36,7 +36,7 @@
             type: String
         },
         autoComplete: {
-            type: Object as PropType<'on' | 'off'>,
+            type: String,
             default: 'off'
         },
         checks: {

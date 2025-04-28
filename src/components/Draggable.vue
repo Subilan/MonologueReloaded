@@ -1,10 +1,8 @@
 <template>
-    <div ref="draggable-wrapper" class="draggable-wrapper" @mousedown="startDrag" :style="isDragging ? {
-        position: 'fixed',
+    <div ref="draggable-wrapper" class="draggable-wrapper" :class="{dragging: isDragging}" @mousedown="startDrag" :style="isDragging ? {
         left: current.x + 'px',
         top: current.y + 'px',
         width: initial.width,
-        opacity: '.7'
     } : {}">
         <slot />
     </div>
@@ -29,6 +27,8 @@
 
     let offsetX = ref(0);
     let offsetY = ref(0);
+
+    const bodyOriginalOverflowX = document.body.style.overflowX;
 
     const startDrag = (e: MouseEvent) => {
         recordLayoutParameters();
@@ -61,7 +61,7 @@
 
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', stopDrag);
-        document.body.style.overflowX = '';
+        document.body.style.overflowX = bodyOriginalOverflowX;
     };
 
     function initCurrentXy() {
@@ -89,7 +89,12 @@
 .draggable-wrapper {
     cursor: move;
     user-select: none;
-    z-index: 100;
+
+    &.dragging {
+        position: fixed;
+        opacity: .7;
+        z-index: 200;
+    }
 }
 
 .dragged-away-skeleton {
