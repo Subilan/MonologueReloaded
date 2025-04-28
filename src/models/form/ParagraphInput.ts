@@ -8,10 +8,10 @@ export interface ParagraphInputResult {
 
 export interface ParagraphInputTemplateConfiguration extends Dictionary<any> {
 	required: boolean;
-	type: 'text' | 'number';
+	type: 'text' | 'number' | 'select';
 	min: number | '';
 	max: number | '';
 	minLength?: number;
 	maxLength?: number;
-	r?: RegExp;
+	options?: string[];
 }

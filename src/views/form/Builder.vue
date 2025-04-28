@@ -8,7 +8,7 @@
   import TextInput from '@/components/form-elements/TextInput.vue';
   import FormElementShortcut from '@/components/FormElementShortcut.vue';
   import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
-  import { IconDropdown, IconMultipleChoice, IconTextInput, IconSingleChoice, IconParagraphInput } from '@/icons';
+  import { IconDropdown, IconMultipleChoice, IconTextInput, IconSingleChoice, IconParagraphInput, IconTextInputMultiple } from '@/icons';
   import router from '@/router';
   import { BlockStack, Box, Card, Icon, InlineGrid, Layout, LayoutSection, Page, Text } from '@ownego/polaris-vue';
   import { useTemplateRef } from 'vue';
@@ -62,6 +62,10 @@
                 简单填空
               </FormElementShortcut>
               <FormElementShortcut>
+                <Icon :source="IconTextInputMultiple"/>
+                多重填空
+              </FormElementShortcut>
+              <FormElementShortcut>
                 <Icon :source="IconParagraphInput"/>
                 段落填空
               </FormElementShortcut>
@@ -84,7 +88,7 @@
                 },
               ]
                 " />
-            <ParagraphInput :template="`Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [] and my favorite singer is [].`" ref="exampleParagraphInput" title="示例段落填空题" :index="4" />
+            <ParagraphInput :template="`Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`" ref="exampleParagraphInput" title="示例段落填空题" :index="4" />
           </BlockStack>
           <Card>
             <CardTitle>

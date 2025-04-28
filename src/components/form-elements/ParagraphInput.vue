@@ -27,6 +27,8 @@
     const templateSplitted = props.template.split(/\[.*?\]/);
     const templateConfigurations = compileTemplateConfiguration(extractTemplateConfiguration(props.template));
 
+    console.log(templateConfigurations)
+
     const fieldCount = templateSplitted.length - 1;
 
     const models = ref(new Array(fieldCount).fill(''));
@@ -89,6 +91,7 @@
         errors.value[i] = false;
         return true;
     }
+    
 </script>
 
 <template>
@@ -100,7 +103,7 @@
                     :max-length="templateConfigurations[i]['maxLength']" :error="errors[i]"
                     :min-length="templateConfigurations[i]['minLength']" :min="templateConfigurations[i]['min']"
                     :max="templateConfigurations[i]['max']" :type="templateConfigurations[i]['type']" size="slim"
-                    auto-size class="paragraph-textfield" auto-complete="off" v-if="i < templateSplitted.length - 1" />
+                    auto-size class="paragraph-textfield" auto-complete="off" v-if="i < templateSplitted.length - 1 && templateConfigurations[i]['type'] !== 'select'" />
             </template>
         </div>
     </FormElement>
