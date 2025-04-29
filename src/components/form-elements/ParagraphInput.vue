@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { TextField } from '@ownego/polaris-vue';
+    import { TextField, Select } from '@ownego/polaris-vue';
     import FormElement from '../FormElement.vue';
     import { computed, ref } from 'vue';
     import type { ParagraphInputResult } from '@/models/form/ParagraphInput';
@@ -22,7 +22,6 @@
             required: true
         }
     });
-
 
     const templateSplitted = props.template.split(/\[.*?\]/);
     const templateConfigurations = compileTemplateConfiguration(extractTemplateConfiguration(props.template));
@@ -91,7 +90,7 @@
         errors.value[i] = false;
         return true;
     }
-    
+
 </script>
 
 <template>
@@ -103,7 +102,14 @@
                     :max-length="templateConfigurations[i]['maxLength']" :error="errors[i]"
                     :min-length="templateConfigurations[i]['minLength']" :min="templateConfigurations[i]['min']"
                     :max="templateConfigurations[i]['max']" :type="templateConfigurations[i]['type']" size="slim"
-                    auto-size class="paragraph-textfield" auto-complete="off" v-if="i < templateSplitted.length - 1 && templateConfigurations[i]['type'] !== 'select'" />
+                    auto-size class="paragraph-textfield" auto-complete="off"
+                    v-if="i < templateSplitted.length - 1 && templateConfigurations[i]['type'] !== 'select'" />
+                <Select v-model="models[i]" :options="templateConfigurations[i]['options']?.map(x => {
+                    return {
+                        label: x,
+                        value: x
+                    }
+                })" v-if="i < templateSplitted.length - 1 && templateConfigurations[i]['type'] === 'select'" />
             </template>
         </div>
     </FormElement>
