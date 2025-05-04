@@ -4,6 +4,9 @@ import ChevronDownCircleOutline from '@mdi/svg/svg/chevron-down-circle-outline.s
 import TextBoxOutline from '@mdi/svg/svg/text-box-outline.svg';
 import TextBoxMultipleOutline from '@mdi/svg/svg/text-box-multiple-outline.svg';
 import FormTextbox from '@mdi/svg/svg/form-textbox.svg';
+import TuneVariant from '@mdi/svg/svg/tune-variant.svg';
+import StarOutline from '@mdi/svg/svg/star-outline.svg';
+import Star from '@mdi/svg/svg/star.svg';
 
 export {
     RadioBoxMarked as IconSingleChoice,
@@ -11,5 +14,8 @@ export {
     ChevronDownCircleOutline as IconDropdown,
     TextBoxOutline as IconTextInput,
     TextBoxMultipleOutline as IconTextInputMultiple,
-    FormTextbox as IconParagraphInput
+    FormTextbox as IconParagraphInput,
+    TuneVariant as IconSlider,
+    StarOutline as IconStar,
+    Star as IconStarFilled
 }

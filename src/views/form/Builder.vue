@@ -4,23 +4,28 @@
   import Draggable from '@/components/Draggable.vue';
   import Choice from '@/components/form-elements/Choice.vue';
   import ParagraphInput from '@/components/form-elements/ParagraphInput.vue';
+  import Rating from '@/components/form-elements/Rating.vue';
   import Select from '@/components/form-elements/Select.vue';
+  import Slider from '@/components/form-elements/Slider.vue';
   import TextInput from '@/components/form-elements/TextInput.vue';
+  import TextInputMultiple from '@/components/form-elements/TextInputMultiple.vue';
   import FormElementShortcut from '@/components/FormElementShortcut.vue';
   import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
-  import { IconDropdown, IconMultipleChoice, IconTextInput, IconSingleChoice, IconParagraphInput, IconTextInputMultiple } from '@/icons';
+  import { IconDropdown, IconMultipleChoice, IconTextInput, IconSingleChoice, IconParagraphInput, IconTextInputMultiple, IconSlider, IconStar } from '@/icons';
   import router from '@/router';
-  import { BlockStack, Box, Card, Icon, InlineGrid, Layout, LayoutSection, Page, Text } from '@ownego/polaris-vue';
+  import { BlockStack, Card, Icon, InlineGrid, Layout, LayoutSection, Page } from '@ownego/polaris-vue';
   import { useTemplateRef } from 'vue';
 
   const exampleChoiceRef = useTemplateRef('exampleChoice');
   const exampleSelect = useTemplateRef('exampleSelect');
+  const exampleTextInput = useTemplateRef('exampleTextInput');
   const exampleParagraphInput = useTemplateRef('exampleParagraphInput');
+  const exampleTextInputMultiple = useTemplateRef('exampleTextInputMultiple');
+  const exampleRating = useTemplateRef('exampleRating');
 
   async function save() {
-    console.log(exampleParagraphInput.value?.get());
+    console.log(exampleRating.value?.get());
   }
-
 </script>
 
 <template>
@@ -62,12 +67,25 @@
                 简单填空
               </FormElementShortcut>
               <FormElementShortcut>
-                <Icon :source="IconTextInputMultiple"/>
+                <Icon :source="IconTextInputMultiple" />
                 多重填空
               </FormElementShortcut>
               <FormElementShortcut>
-                <Icon :source="IconParagraphInput"/>
+                <Icon :source="IconParagraphInput" />
                 段落填空
+              </FormElementShortcut>
+            </FormElementShortcutContainer>
+            <CardSectionTitle>
+              评估
+            </CardSectionTitle>
+            <FormElementShortcutContainer>
+              <FormElementShortcut>
+                <Icon :source="IconSlider" />
+                滑块
+              </FormElementShortcut>
+              <FormElementShortcut>
+                <Icon :source="IconStar" />
+                评分
               </FormElementShortcut>
             </FormElementShortcutContainer>
           </Card>
@@ -80,15 +98,46 @@
               { label: 'Yesterday', value: 'yesterday' },
               { label: 'Last 7 days', value: 'lastWeek' },
             ]" />
-            <TextInput ref="exampleTextInput" title="示例填空题" :index="3" helper-text="在此输入" placeholder="占位符" :lines="5"
-              :checks="[
-                {
-                  r: /^[A-Za-z0-9]+$/,
-                  error: 'regex1 test failed'
-                },
-              ]
-                " />
-            <ParagraphInput :template="`Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`" ref="exampleParagraphInput" title="示例段落填空题" :index="4" />
+            <TextInput ref="exampleTextInput" title="示例填空题" :index="3" :config="{
+              helperText: '在此输入',
+              placeholder: '占位符',
+              multiline: 5,
+              autoComplete: 'off'
+            }" :check="[
+              {
+                r: /^[A-Za-z0-9]+$/,
+                error: 'regex1 test failed'
+              },
+            ]" />
+            <ParagraphInput
+              :template="`Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`"
+              ref="exampleParagraphInput" title="示例段落填空题" :index="4" />
+            <TextInputMultiple ref="exampleTextInputMultiple" title="示例多重填空题" :index="5" :configs="[
+              {
+                autoComplete: 'off'
+              },
+              {
+                autoComplete: 'off',
+                multiline: 6
+              },
+              {
+                autoComplete: 'off',
+                label: '只能是数字'
+              },
+              {
+                autoComplete: 'off'
+              },
+            ]" :checks="[
+              [],
+              [],
+              [{
+                r: /^\d+$/,
+                error: '不全为数字'
+              }],
+              []
+            ]" />
+            <Slider title="示例滑块题" :index="6" ref="exampleSlider" output :max="5" suffix="222" />
+            <Rating title="示例评分题" :index="7" ref="exampleRating" />
           </BlockStack>
           <Card>
             <CardTitle>
