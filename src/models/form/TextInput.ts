@@ -1,4 +1,24 @@
 export interface TextInputCheck {
-    r: RegExp,
-    error: string
+	r: RegExp;
+	error: string;
+}
+
+export type PartialExcept<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
+
+export interface TextInputConfig {
+	type: 'number' | 'text' | 'search' | 'url' | 'email' | 'tel' | 'time' | 'integer' | 'password' | 'date' | 'datetime-local' | 'month' | 'week' | 'currency';
+	max: number;
+	min: number;
+	maxLength: number;
+	placeholder: string;
+	label: string;
+	autoComplete: 'off' | 'on';
+	multiline: number;
+	helperText: string;
+	showCharacterCount: boolean;
+}
+
+export interface TextInputResult {
+	value: string;
+	valid: boolean;
 }
