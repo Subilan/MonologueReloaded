@@ -1,9 +1,9 @@
 import type { Dictionary } from "@/types";
+import type { FormElements } from "../Form";
 
-export interface ParagraphInputResult {
+export interface ParagraphInputResult extends FormElements.ResultBase {
 	content: string;
 	values: string[];
-	valid: boolean;
 }
 
 export interface ParagraphInputTemplateConfiguration extends Dictionary<any> {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import type { PartialExcept, TextInputCheck, TextInputConfig } from '@/models/form/TextInput';
+    import type { PartialExcept, TextInputCheck, TextInputConfig } from '@/models/form/elements/TextInput';
     import { ref, watch, type PropType } from 'vue';
 
     const props = defineProps({

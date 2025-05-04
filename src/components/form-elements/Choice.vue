@@ -1,36 +1,18 @@
 <script lang="ts" setup>
     import { ChoiceList } from '@ownego/polaris-vue';
     import FormElement from '../FormElement.vue';
-    import { computed, h, ref, resolveComponent } from 'vue';
-    import type { ChoiceOption, ChoiceResult } from '@/models/form/Choice';
+    import { computed, h, ref, resolveComponent, type PropType } from 'vue';
+    import type { ChoiceOption, ChoiceResult } from '@/models/form/elements/Choice';
+    import type { FormElements } from '@/models/form/Form';
 
     const props = defineProps({
-        title: {
-            type: String,
+        config: {
+            type: Object as PropType<FormElements.ChoiceObject>,
             required: true
-        },
-        index: {
-            type: Number,
-            required: true
-        },
-        description: {
-            type: String
-        },
-        multiple: {
-            type: Boolean,
-            default: false,
-        },
-        other: {
-            type: Boolean,
-            default: false
-        },
-        otherLabel: {
-            type: String,
-            default: 'Other'
-        },
+        }
     });
 
-    const selected = ref(['']);
+    const selected = ref<string[]>([]);
     const otherValue = ref('');
 
     const otherChoice = h(resolveComponent('TextField'), {
@@ -42,16 +24,18 @@
         }
     })
 
-    const testChoices = computed(() => {
-        let base: ChoiceOption[] = [
-            { label: 'Hidden', value: 'hidden', helpText: 'example help text' },
-            { label: 'Optional', value: 'optional' },
-            { label: 'Required', value: 'required' }
-        ];
+    const finalChoices = computed(() => {
+        // let base: ChoiceOption[] = [
+        //     { label: 'Hidden', value: 'hidden', helpText: 'example help text' },
+        //     { label: 'Optional', value: 'optional' },
+        //     { label: 'Required', value: 'required' }
+        // ];
 
-        if (props.other) {
+        let base = structuredClone(props.config.choices);
+
+        if (props.config.hasOther) {
             base.push({
-                label: props.otherLabel,
+                label: props.config.otherLabel || 'Other',
                 value: 'other',
                 renderChildren: selected.value.includes('other') && otherChoice
             })
@@ -63,7 +47,8 @@
     function get(): ChoiceResult {
         return {
             selection: selected.value,
-            otherValue: otherValue.value
+            otherValue: otherValue.value,
+            valid: selected.value.length > 0
         };
     }
 
@@ -73,7 +58,7 @@
 </script>
 
 <template>
-    <FormElement :title="title" :index="index" :description="description">
-        <ChoiceList :choices="testChoices" v-model="selected" :allow-multiple="multiple" />
+    <FormElement>
+        <ChoiceList :choices="finalChoices" v-model="selected" :allow-multiple="config.isMultiple" />
     </FormElement>
 </template>

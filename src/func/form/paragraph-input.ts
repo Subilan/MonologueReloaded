@@ -1,4 +1,4 @@
-import type { ParagraphInputTemplateConfiguration } from '@/models/form/ParagraphInput';
+import type { ParagraphInputTemplateConfiguration } from '@/models/form/elements/ParagraphInput';
 
 const numberChecker = (x: string) => /^\d+$/.test(x);
 const availableAtrributes = ['type', 'min', 'max', 'minLength', 'maxLength', 'options'];
@@ -59,7 +59,7 @@ export function compileTemplateConfiguration(configuration: string[][]) {
 				res['required'] = true;
 			}
 
-			console.log(res['type']);
+			// console.log(res['type']);
 
             // extract options
 			if (commaItem.startsWith('options{') && commaItem.endsWith('}') && res['type'] === 'select') {

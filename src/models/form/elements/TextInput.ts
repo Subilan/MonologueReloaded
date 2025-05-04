@@ -1,3 +1,4 @@
+
 export interface TextInputCheck {
 	r: RegExp;
 	error: string;
@@ -16,9 +17,4 @@ export interface TextInputConfig {
 	multiline: number;
 	helperText: string;
 	showCharacterCount: boolean;
-}
-
-export interface TextInputResult {
-	value: string;
-	valid: boolean;
 }

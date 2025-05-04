@@ -3,47 +3,31 @@
     import FormElement from '../FormElement.vue';
     import { IconStar, IconStarFilled } from '@/icons';
     import { computed, ref, type PropType } from 'vue';
+    import type { FormElements } from '@/models/form/Form';
 
     const props = defineProps({
-        title: {
-            type: String,
+        config: {
+            type: Object as PropType<FormElements.RatingObject>,
             required: true
-        },
-        index: {
-            type: Number,
-            required: true
-        },
-        description: {
-            type: String
-        },
-        levels: {
-            type: Number,
-            default: 5
-        },
-        ratingMessages: {
-            type: Object as PropType<string[]>,
-            default: ['很差', '较差', '一般', '较好', '很好']
         }
     });
 
-    const actualValue = ref(new Array(props.levels <= 10 && props.levels > 0 ? props.levels : 5).fill(false));
-    const assumedValues = ref(new Array(props.levels <= 10 && props.levels > 0 ? props.levels : 5).fill(false));
+    function getSum(arr: boolean[]) {
+        return arr.reduce((a, b) => Number(a) + Number(b), 0);
+    }
 
-    const getSum = (arr: boolean[]) => arr.reduce((a, b) => Number(a) + Number(b), 0);
+    function normalizeLevel(level: number) {
+        return level <= 10 && level > 0 ? level : 5;
+    }
+
+    const actualValue = ref(new Array(normalizeLevel(props.config.levels)).fill(false));
+    const assumedValues = ref(new Array(normalizeLevel(props.config.levels)).fill(false));
 
     const value = computed(() => isAssuming.value ? getSum(assumedValues.value) : getSum(actualValue.value));
 
     let prevAssumedValues: boolean[] = [];
     const confirm = ref(false);
     const isAssuming = ref(false);
-
-    function get() {
-        return value.value;
-    }
-
-    defineExpose({
-        get
-    })
 
     function onIconMouseEnter(i: number) {
         for (let j = 0; j < assumedValues.value.length; j++) {
@@ -70,16 +54,28 @@
     }
 
     const ratingMessage = computed(() => {
-        return value.value === 0 ? '' : props.ratingMessages[value.value - 1];
+        return value.value === 0 ? '' : props.config.ratingMessages[value.value - 1];
     })
+
+    function get(): FormElements.SimpleResult<number> {
+        return {
+            value: value.value,
+            valid: value.value > 0
+        };
+    }
+
+    defineExpose({
+        get
+    });
 </script>
 
 <template>
-    <FormElement :title="title" :index="index" :description="description">
+    <FormElement>
         <div class="rating-outer">
             <InlineStack align="center" style="width: 30%" @mouseleave="onRatingLeave()" @mouseenter="onRatingEnter()">
                 <Icon @click="confirm = true" @mouseenter="onIconMouseEnter(i - 1)" draggable="false"
-                    class="rating-icon" :source="assumedValues[i - 1] ? IconStarFilled : IconStar" v-for="i in 5" />
+                    class="rating-icon" :source="assumedValues[i - 1] ? IconStarFilled : IconStar"
+                    v-for="i in props.config.levels" />
             </InlineStack>
             <Box padding-block-start="400">
                 <Text as="p" variant="bodyLg">

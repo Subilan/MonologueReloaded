@@ -1,32 +1,22 @@
 <script setup lang="ts">
     import { TextField, Select } from '@ownego/polaris-vue';
     import FormElement from '../FormElement.vue';
-    import { computed, ref } from 'vue';
-    import type { ParagraphInputResult } from '@/models/form/ParagraphInput';
+    import { computed, ref, type PropType } from 'vue';
+    import type { ParagraphInputResult } from '@/models/form/elements/ParagraphInput';
     import { compileTemplateConfiguration, extractTemplateConfiguration } from '@/func/form/paragraph-input';
+    import type { FormElements } from '@/models/form/Form';
 
     const props = defineProps({
-        title: {
-            type: String,
-            required: true
-        },
-        index: {
-            type: Number,
-            required: true
-        },
-        description: {
-            type: String
-        },
-        template: {
-            type: String,
+        config: {
+            type: Object as PropType<FormElements.ParagraphInputObject>,
             required: true
         }
     });
 
-    const templateSplitted = props.template.split(/\[.*?\]/);
-    const templateConfigurations = compileTemplateConfiguration(extractTemplateConfiguration(props.template));
+    const templateSplitted = props.config.template.split(/\[.*?\]/);
+    const templateConfigurations = compileTemplateConfiguration(extractTemplateConfiguration(props.config.template));
 
-    console.log(templateConfigurations)
+    // console.log(templateConfigurations)
 
     const fieldCount = templateSplitted.length - 1;
 
@@ -94,7 +84,7 @@
 </script>
 
 <template>
-    <FormElement :title="title" :index="index" :description="description">
+    <FormElement>
         <div class="paragraph-container">
             <template v-for="(segment, i) in templateSplitted">
                 <Text variant="bodyLg">{{ segment }}</Text>

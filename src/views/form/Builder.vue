@@ -1,30 +1,119 @@
 <script setup lang="ts">
   import CardSectionTitle from '@/components/CardSectionTitle.vue';
   import CardTitle from '@/components/CardTitle.vue';
-  import Draggable from '@/components/Draggable.vue';
-  import Choice from '@/components/form-elements/Choice.vue';
-  import ParagraphInput from '@/components/form-elements/ParagraphInput.vue';
-  import Rating from '@/components/form-elements/Rating.vue';
-  import Select from '@/components/form-elements/Select.vue';
-  import Slider from '@/components/form-elements/Slider.vue';
-  import TextInput from '@/components/form-elements/TextInput.vue';
-  import TextInputMultiple from '@/components/form-elements/TextInputMultiple.vue';
   import FormElementShortcut from '@/components/FormElementShortcut.vue';
   import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
   import { IconDropdown, IconMultipleChoice, IconTextInput, IconSingleChoice, IconParagraphInput, IconTextInputMultiple, IconSlider, IconStar } from '@/icons';
+  import type { FormElements, FormElementType } from '@/models/form/Form';
   import router from '@/router';
   import { BlockStack, Card, Icon, InlineGrid, Layout, LayoutSection, Page } from '@ownego/polaris-vue';
   import { useTemplateRef } from 'vue';
+  import Choice from '@/components/form-elements/Choice.vue';
+  import Select from '@/components/form-elements/Select.vue';
+  import Rating from '@/components/form-elements/Rating.vue';
+  import Slider from '@/components/form-elements/Slider.vue';
+  import TextInput from '@/components/form-elements/TextInput.vue';
+  import ParagraphInput from '@/components/form-elements/ParagraphInput.vue';
 
-  const exampleChoiceRef = useTemplateRef('exampleChoice');
-  const exampleSelect = useTemplateRef('exampleSelect');
-  const exampleTextInput = useTemplateRef('exampleTextInput');
-  const exampleParagraphInput = useTemplateRef('exampleParagraphInput');
-  const exampleTextInputMultiple = useTemplateRef('exampleTextInputMultiple');
-  const exampleRating = useTemplateRef('exampleRating');
+  function getComponent(type: FormElementType) {
+    switch (type) {
+      case 'choice': return Choice;
+      case 'select': return Select;
+      case 'text_input': return TextInput;
+      case 'paragraph_input': return ParagraphInput;
+      case 'slider': return Slider;
+      case 'rating': return Rating;
+    }
+  }
+
+  const objects: FormElements.Object[] = [
+    {
+      type: 'choice',
+      isMultiple: true,
+      hasOther: true,
+      choices: [{
+        label: 'aaa',
+        value: 'aaa'
+      }]
+    },
+    {
+      type: 'select',
+      helperText: '昨天，今天，还是明天？',
+      options: [
+        { label: 'Today', value: 'today' },
+        { label: 'Yesterday', value: 'yesterday' },
+        { label: 'Last 7 days', value: 'lastWeek' },
+      ]
+    },
+    {
+      type: 'text_input',
+      configs: [
+        {
+          helperText: '在此输入',
+          placeholder: '占位符',
+          multiline: 5,
+          autoComplete: 'off'
+        }
+      ],
+      checks: [
+        [{
+          r: /^[A-Za-z0-9]+$/,
+          error: 'regex1 test failed'
+        },]
+      ]
+    },
+    {
+      type: 'paragraph_input',
+      template: `Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`
+    },
+    {
+      type: 'text_input',
+      configs: [
+        {
+          autoComplete: 'off'
+        },
+        {
+          autoComplete: 'off',
+          multiline: 6
+        },
+        {
+          autoComplete: 'off',
+          label: '只能是数字'
+        },
+        {
+          autoComplete: 'off'
+        },
+      ],
+      checks: [
+        [],
+        [],
+        [{
+          r: /^\d+$/,
+          error: '不全为数字'
+        }],
+        []
+      ]
+    },
+    {
+      type: 'slider',
+      isRange: false,
+      output: true,
+      maxValue: 5,
+      suffix: 'test suffix',
+      prefix: 'test prefix',
+    },
+    {
+      type: 'rating',
+      ratingMessages: ['很差', '较差', '一般', '较好', '很好'],
+      levels: 5
+    }
+  ];
+
+  const objectRefs = useTemplateRef('formObjects');
 
   async function save() {
-    console.log(exampleRating.value?.get());
+    const values = objectRefs.value?.map(x => x?.get());
+    console.log(values)
   }
 </script>
 
@@ -90,54 +179,9 @@
             </FormElementShortcutContainer>
           </Card>
           <BlockStack gap="400">
-            <Draggable>
-              <Choice ref="exampleChoice" title="示例选择题" multiple :index="1" other />
-            </Draggable>
-            <Select ref="exampleSelect" title="示例下拉题" :index="2" helper-text="昨天，今天还是明天？" :options="[
-              { label: 'Today', value: 'today' },
-              { label: 'Yesterday', value: 'yesterday' },
-              { label: 'Last 7 days', value: 'lastWeek' },
-            ]" />
-            <TextInput ref="exampleTextInput" title="示例填空题" :index="3" :config="{
-              helperText: '在此输入',
-              placeholder: '占位符',
-              multiline: 5,
-              autoComplete: 'off'
-            }" :check="[
-              {
-                r: /^[A-Za-z0-9]+$/,
-                error: 'regex1 test failed'
-              },
-            ]" />
-            <ParagraphInput
-              :template="`Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`"
-              ref="exampleParagraphInput" title="示例段落填空题" :index="4" />
-            <TextInputMultiple ref="exampleTextInputMultiple" title="示例多重填空题" :index="5" :configs="[
-              {
-                autoComplete: 'off'
-              },
-              {
-                autoComplete: 'off',
-                multiline: 6
-              },
-              {
-                autoComplete: 'off',
-                label: '只能是数字'
-              },
-              {
-                autoComplete: 'off'
-              },
-            ]" :checks="[
-              [],
-              [],
-              [{
-                r: /^\d+$/,
-                error: '不全为数字'
-              }],
-              []
-            ]" />
-            <Slider title="示例滑块题" :index="6" ref="exampleSlider" output :max="5" suffix="222" />
-            <Rating title="示例评分题" :index="7" ref="exampleRating" />
+            <!-- @vue-ignore -->
+            <component v-for="(obj, i) in objects" ref="formObjects" :is="getComponent(obj.type)" :config="obj"
+              :index="i + 1" :title="obj.title || 'default title'" :description="obj.description" />
           </BlockStack>
           <Card>
             <CardTitle>
