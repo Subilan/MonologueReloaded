@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { Box, Card, InlineStack } from '@ownego/polaris-vue';
+    import Draggable from './Draggable.vue';
 
     const props = defineProps({
         title: {
@@ -15,21 +16,23 @@
 </script>
 
 <template>
-    <Card>
-        <Box padding-block-end="400">
-            <InlineStack gap="400">
-                <Text variant="headingLg" as="h2">
-                    {{ index }}
+    <Draggable :idx="(index || 0) - 1">
+        <Card ref="card">
+            <Box padding-block-end="400">
+                <InlineStack gap="400">
+                    <Text variant="headingLg" as="h2">
+                        {{ index }}
+                    </Text>
+                    <Text variant="headingLg" as="h2">
+                        {{ title }}
+                    </Text>
+                </InlineStack>
+            </Box>
+            <Box padding-block-end="200" v-if="description">
+                <Text variant="bodyMd" as="p" v-html="description">
                 </Text>
-                <Text variant="headingLg" as="h2">
-                    {{ title }}
-                </Text>
-            </InlineStack>
-        </Box>
-        <Box padding-block-end="200" v-if="description">
-            <Text variant="bodyMd" as="p" v-html="description">
-            </Text>
-        </Box>
-        <slot />
-    </Card>
+            </Box>
+            <slot />
+        </Card>
+    </Draggable>
 </template>

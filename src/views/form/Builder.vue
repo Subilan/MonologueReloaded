@@ -7,13 +7,16 @@
   import type { FormElements, FormElementType } from '@/models/form/Form';
   import router from '@/router';
   import { BlockStack, Card, Icon, InlineGrid, Layout, LayoutSection, Page } from '@ownego/polaris-vue';
-  import { useTemplateRef } from 'vue';
+  import { onMounted, useTemplateRef, watch } from 'vue';
   import Choice from '@/components/form-elements/Choice.vue';
   import Select from '@/components/form-elements/Select.vue';
   import Rating from '@/components/form-elements/Rating.vue';
   import Slider from '@/components/form-elements/Slider.vue';
   import TextInput from '@/components/form-elements/TextInput.vue';
   import ParagraphInput from '@/components/form-elements/ParagraphInput.vue';
+  import draggingElement from '@/draggingElement';
+  import Rect from '@/func/rect';
+  import type { RectObject } from '@/types';
 
   function getComponent(type: FormElementType) {
     switch (type) {
@@ -115,6 +118,45 @@
     const values = objectRefs.value?.map(x => x?.get());
     console.log(values)
   }
+
+  let objectRects: RectObject[] = [];
+
+  function updateObjectRects() {
+    objectRects = objectRefs.value?.map((x, i) => {
+      let target = x?.$el.nextSibling as HTMLElement;
+      if (!target) return { x: 0, y: 0, w: 0, h: 0, id: -1 };
+      const rect = target.getBoundingClientRect();
+      return {
+        x: rect.x,
+        y: rect.y,
+        w: rect.width,
+        h: rect.height,
+        id: i
+      }
+    }) || [];
+  }
+
+  onMounted(() => {
+    updateObjectRects();
+
+    document.addEventListener('scroll', e => updateObjectRects());
+  })
+
+
+  watch(draggingElement, el => {
+    if (el.id === -1) return;
+    if (!el.isDragging || !el.isChanging) return;
+    const draggingRect = objectRects[el.id];
+    const inEl = objectRects.filter(r => r.id !== el.id && Rect.withObject({
+      x: el.x,
+      y: el.y,
+      w: draggingRect.w,
+      h: draggingRect.h
+    }).isIn(Rect.withObject(r)));
+    if (inEl.length === 0) return;
+    let tgEl = inEl[inEl.length - 1];
+    console.log(el.x, el.y, tgEl.x, tgEl.y, tgEl.x + tgEl.w, tgEl.y + tgEl.h, `id=${tgEl.id}`)
+  })
 </script>
 
 <template>
