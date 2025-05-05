@@ -1,30 +1,36 @@
 <template>
-    <div ref="draggable-wrapper" class="draggable-wrapper" :class="{dragging: isDragging}" @mousedown="startDrag" :style="isDragging ? {
-        left: current.x + 'px',
-        top: current.y + 'px',
-        width: initial.width,
-    } : {}">
+    <div ref="draggable-wrapper" class="draggable-wrapper" :class="{ dragging: isDragging }" @mousedown="startDrag"
+        :style="isDragging ? {
+            left: current.x + 'px',
+            top: current.y + 'px',
+            width
+        } : {}">
         <slot />
     </div>
     <div background="bg-surface-trinary" class="dragged-away-skeleton" v-if="isDragging" :style="{
-        height: initial.height
+        height
     }" />
 </template>
 
 <script lang="ts" setup>
-    import { Card } from '@ownego/polaris-vue';
-    import { onMounted, reactive, ref, useTemplateRef } from 'vue';
+    import draggingElement from '@/draggingElement';
+    import { onMounted, reactive, ref, useTemplateRef, watch, type PropType } from 'vue';
+
+    const props = defineProps({
+        idx: {
+            type: Number,
+            default: -1
+        }
+    })
 
     const wrapper = useTemplateRef('draggable-wrapper');
     const current = reactive({ x: 0, y: 0 }); // where it is *now*
-    const initial = reactive({
-        x: 0,
-        y: 0,
-        width: 'auto',
-        height: '0px'
-    });
+    const width = ref('auto');
+    const height = ref('0px');
     const isDragging = ref(false);
 
+    let initialX = 0;
+    let initialY = 0;
     let offsetX = ref(0);
     let offsetY = ref(0);
 
@@ -55,34 +61,48 @@
 
         initCurrentXy();
 
-        // Here you can check: is dropped inside a valid zone?
-        // If not:
-        // current.value = { ...initial.value };
-
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', stopDrag);
         document.body.style.overflowX = bodyOriginalOverflowX;
     };
 
     function initCurrentXy() {
-        current.x = initial.x;
-        current.y = initial.y;
+        current.x = initialX;
+        current.y = initialY;
     }
 
     function recordLayoutParameters() {
         const boundingRect = wrapper.value?.getBoundingClientRect();
-        if (boundingRect === null) return;
+        if (!boundingRect) return;
 
-        initial.x = boundingRect?.left || 0;
-        initial.y = boundingRect?.top || 0;
-        initial.width = wrapper.value?.clientWidth + 'px' || 'auto';
-        initial.height = wrapper.value?.clientHeight + 'px' || '0px';
+        initialX = boundingRect.x;
+        initialY = boundingRect.y;
     }
 
     onMounted(() => {
+        width.value = wrapper.value?.clientWidth + 'px' || 'auto';
+        height.value = wrapper.value?.clientHeight + 'px' || '0px';
         recordLayoutParameters();
         initCurrentXy();
+
+        document.addEventListener('scroll', e => {
+            recordLayoutParameters();
+            initCurrentXy();
+        })
     })
+
+    watch(current, v => {
+        if (!isDragging.value) return;
+        draggingElement.isChanging = draggingElement.x !== v.x || draggingElement.y !== v.y;
+        draggingElement.x = v.x;
+        draggingElement.y = v.y;
+    });
+
+    watch(isDragging, v => {
+        draggingElement.isDragging = v;
+        if (v) draggingElement.id = props.idx;
+        else draggingElement.id = -1;
+    });
 </script>
 
 <style lang="scss">
