@@ -3,23 +3,24 @@ import type { SelectOption } from './elements/Select';
 import type { PartialExcept, TextInputCheck, TextInputConfig } from './elements/TextInput';
 
 const FormElementTypes = ['choice', 'select', 'text_input', 'paragraph_input', 'slider', 'rating'] as const;
-export type FormElementType = typeof FormElementTypes[number];
+export type FormElementType = (typeof FormElementTypes)[number];
 
 export namespace FormElements {
 	export type Object = ChoiceObject | SelectObject | TextInputObject | SliderObject | RatingObject | ParagraphInputObject;
 
 	export interface ResultBase {
-		valid: boolean
+		valid: boolean;
 	}
 
 	export interface SimpleResult<T> extends ResultBase {
-		value: T
+		value: T;
 	}
 
 	interface Base {
 		type: FormElementType;
 		description?: string;
 		title?: string;
+		identifier?: string;
 	}
 
 	export interface ChoiceObject extends Base {

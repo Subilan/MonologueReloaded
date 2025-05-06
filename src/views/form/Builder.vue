@@ -7,16 +7,16 @@
   import type { FormElements, FormElementType } from '@/models/form/Form';
   import router from '@/router';
   import { BlockStack, Card, Icon, InlineGrid, Layout, LayoutSection, Page } from '@ownego/polaris-vue';
-  import { onMounted, useTemplateRef, watch } from 'vue';
   import Choice from '@/components/form-elements/Choice.vue';
   import Select from '@/components/form-elements/Select.vue';
   import Rating from '@/components/form-elements/Rating.vue';
   import Slider from '@/components/form-elements/Slider.vue';
   import TextInput from '@/components/form-elements/TextInput.vue';
   import ParagraphInput from '@/components/form-elements/ParagraphInput.vue';
-  import draggingElement from '@/draggingElement';
-  import Rect from '@/func/rect';
-  import type { RectObject } from '@/types';
+  import { useEventBus } from '@vueuse/core';
+  import makeId from '@/func/makeId';
+  import { reactive, ref, useTemplateRef } from 'vue';
+  import moveEl from '@/func/moveEl';
 
   function getComponent(type: FormElementType) {
     switch (type) {
@@ -29,7 +29,8 @@
     }
   }
 
-  const objects: FormElements.Object[] = [
+
+  const formElements = reactive<FormElements.Object[]>([
     {
       type: 'choice',
       isMultiple: true,
@@ -110,53 +111,120 @@
       ratingMessages: ['很差', '较差', '一般', '较好', '很好'],
       levels: 5
     }
-  ];
+  ]);
 
-  const objectRefs = useTemplateRef('formObjects');
+  const isCandidate = reactive<{ [prop: string]: boolean }>({});
+  const isFirstCandidate = ref(false);
+
+  function resetCandidates(keys: string[] = []) {
+    for (let key of keys.length > 0 ? keys : Object.keys(isCandidate)) isCandidate[key] = false;
+    isFirstCandidate.value = false;
+  }
+
+  formElements.forEach(v => {
+    v.identifier = makeId(10);
+  });
+
+  resetCandidates(formElements.map(x => x.identifier || ''));
+
+  const formObjectRefs = useTemplateRef('formObjects');
+
+  const bus = useEventBus<string>('draggable');
+
+  const targetIndexes = reactive({
+    from: -1,
+    to: -1
+  });
+
+  const targetDirection = ref('');
+
+  function resetTargetIndexes() {
+    targetIndexes.from = -1;
+    targetIndexes.to = -1;
+  }
+
+  bus.on((event) => {
+    if (event != 'dragstop') return;
+
+    if (targetIndexes.from === -1 || targetIndexes.to === -1) return;
+
+    moveEl(formElements, targetIndexes.from, targetIndexes.to);
+
+    resetTargetIndexes();
+    resetCandidates();
+  })
+
+  bus.on((event, args: {
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    identifier: string,
+    direction: 'up' | 'down'
+  }) => {
+    if (event !== 'drag') return;
+
+    if (!formObjectRefs.value) return;
+
+    const res = formObjectRefs.value.map(x => {
+      if (!x?.$el) return {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        identifier: ''
+      }
+
+      const rect = x.$el.nextSibling.getBoundingClientRect();
+
+      return {
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+        identifier: x.$props.config.identifier
+      }
+    })
+      .filter(formObject => {
+        return !(args.right < formObject.left ||
+          args.left > formObject.right ||
+          args.bottom < formObject.top ||
+          args.top > formObject.bottom) && formObject.identifier !== args.identifier
+      })
+
+    if (res.length === 0) {
+      resetCandidates();
+      resetTargetIndexes();
+    }
+
+    const tg = res[args.direction === 'up' ? 0 : res.length - 1];
+
+    if (!tg) return;
+
+    if (!tg.identifier) return;
+
+    targetIndexes.from = formElements.findIndex(x => x.identifier === args.identifier);
+    targetIndexes.to = formElements.findIndex(x => x.identifier === tg.identifier);
+
+    targetDirection.value = targetIndexes.to > targetIndexes.from ? 'down' : 'up';
+
+    if (targetIndexes.to === 0) {
+      isFirstCandidate.value = true;
+      for (let key of Object.keys(isCandidate)) {
+        isCandidate[key] = false;
+      }
+    } else {
+      isFirstCandidate.value = false;
+      for (let key of Object.keys(isCandidate)) {
+        isCandidate[key] = targetIndexes.to > targetIndexes.from ? key === tg.identifier : key === formElements[Math.max(0, targetIndexes.to - 1)].identifier;
+      }
+    }
+  });
 
   async function save() {
-    const values = objectRefs.value?.map(x => x?.get());
-    console.log(values)
+
   }
 
-  let objectRects: RectObject[] = [];
-
-  function updateObjectRects() {
-    objectRects = objectRefs.value?.map((x, i) => {
-      let target = x?.$el.nextSibling as HTMLElement;
-      if (!target) return { x: 0, y: 0, w: 0, h: 0, id: -1 };
-      const rect = target.getBoundingClientRect();
-      return {
-        x: rect.x,
-        y: rect.y,
-        w: rect.width,
-        h: rect.height,
-        id: i
-      }
-    }) || [];
-  }
-
-  onMounted(() => {
-    updateObjectRects();
-
-    document.addEventListener('scroll', e => updateObjectRects());
-  })
-
-
-  watch(draggingElement, el => {
-    if (el.id === -1) return;
-    if (!el.isDragging || !el.isChanging) return;
-    const draggingRect = objectRects[el.id];
-    const inEl = objectRects.filter(r => r.id !== el.id && Rect.withObject({
-      x: el.x,
-      y: el.y,
-      w: draggingRect.w,
-      h: draggingRect.h
-    }).isIn(Rect.withObject(r)));
-    if (inEl.length === 0) return;
-    let tgEl = inEl[inEl.length - 1];
-    console.log(el.x, el.y, tgEl.x, tgEl.y, tgEl.x + tgEl.w, tgEl.y + tgEl.h, `id=${tgEl.id}`)
-  })
 </script>
 
 <template>
@@ -220,10 +288,12 @@
               </FormElementShortcut>
             </FormElementShortcutContainer>
           </Card>
-          <BlockStack gap="400">
+          <BlockStack gap="0" class="form-elements">
+            <hr style="border-width: 2px;" class="form-element-hr" v-if="isFirstCandidate" />
             <!-- @vue-ignore -->
-            <component v-for="(obj, i) in objects" ref="formObjects" :is="getComponent(obj.type)" :config="obj"
-              :index="i + 1" :title="obj.title || 'default title'" :description="obj.description" />
+            <component v-for="(obj, i) in formElements" :classNames="isCandidate[obj.identifier] ? 'is-candidate' : ''"
+              ref="formObjects" :is="getComponent(obj.type)" :config="obj" :index="i + 1"
+              :title="obj.title || 'default title'" :description="obj.description" :identifier="obj.identifier" />
           </BlockStack>
           <Card>
             <CardTitle>
@@ -235,3 +305,19 @@
     </Layout>
   </Page>
 </template>
+
+<style lang="scss">
+.form-element-hr {
+  border-width: 0;
+  border-color: blue;
+  border-style: solid;
+  border-radius: 100px;
+  margin: 8px 0;
+}
+
+.is-candidate {
+  +hr {
+    border-width: 2px;
+  }
+}
+</style>

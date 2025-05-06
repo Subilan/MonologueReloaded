@@ -2,7 +2,7 @@
     import { ChoiceList } from '@ownego/polaris-vue';
     import FormElement from '../FormElement.vue';
     import { computed, h, ref, resolveComponent, type PropType } from 'vue';
-    import type { ChoiceOption, ChoiceResult } from '@/models/form/elements/Choice';
+    import type { ChoiceResult } from '@/models/form/elements/Choice';
     import type { FormElements } from '@/models/form/Form';
 
     const props = defineProps({
@@ -22,7 +22,7 @@
         'onUpdate:modelValue': (value: string) => {
             otherValue.value = value;
         }
-    })
+    });
 
     const finalChoices = computed(() => {
         // let base: ChoiceOption[] = [
@@ -31,7 +31,7 @@
         //     { label: 'Required', value: 'required' }
         // ];
 
-        let base = structuredClone(props.config.choices);
+        let base = [...props.config.choices];
 
         if (props.config.hasOther) {
             base.push({

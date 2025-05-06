@@ -113,6 +113,7 @@
     gap: 8px;
 }
 
+
 .paragraph-textfield input {
     min-width: 100px;
 }
