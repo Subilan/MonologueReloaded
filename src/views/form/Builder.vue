@@ -16,6 +16,8 @@
   import makeId from '@/func/makeId';
   import { reactive, ref, useTemplateRef } from 'vue';
   import useReorderManager from '@/composables/useReorderManager';
+  import useBus from '@/composables/useBus';
+  import events from '@/events';
 
   function getComponent(type: FormElementType) {
     switch (type) {
@@ -122,9 +124,11 @@
 
   const formObjectRefs = useTemplateRef('formObjects');
 
-  const reorderManager = useReorderManager(formElements, isCandidate, isFirstCandidate, formObjectRefs);
+  const { handleDrag, handleDragStop } = useReorderManager(formElements, isCandidate, isFirstCandidate, formObjectRefs);
 
-  reorderManager.listen();
+  const dragBus = useBus(events.DRAGGABLE.channel);
+  dragBus.on(events.DRAGGABLE.DRAG, handleDrag);
+  dragBus.on(events.DRAGGABLE.DRAGSTOP, handleDragStop)
 
   async function save() {
 

@@ -13,6 +13,8 @@
 </template>
 
 <script lang="ts" setup>
+    import useBus from '@/composables/useBus';
+    import events from '@/events';
     import { useEventBus } from '@vueuse/core';
     import { onMounted, reactive, ref, useTemplateRef } from 'vue';
 
@@ -23,7 +25,7 @@
         }
     })
 
-    const bus = useEventBus<string>('draggable');
+    const bus = useBus(events.DRAGGABLE.channel);
 
     const wrapper = useTemplateRef('draggable-wrapper');
     const current = reactive({ x: 0, y: 0 }); // where it is *now*
@@ -56,13 +58,13 @@
     const onDrag = (e: MouseEvent) => {
         if (isDragging.value) {
             const prevY = current.y;
-            
+
             current.x = e.clientX - offsetX.value;
             current.y = e.clientY - offsetY.value;
 
             const rect = wrapper.value?.getBoundingClientRect();
 
-            bus.emit('drag', {
+            bus.send(events.DRAGGABLE.DRAG, {
                 left: rect?.left || 0,
                 right: rect?.right || 0,
                 top: rect?.top || 0,
@@ -76,7 +78,7 @@
     const stopDrag = () => {
         isDragging.value = false;
 
-        bus.emit('dragstop')
+        bus.send(events.DRAGGABLE.DRAGSTOP)
 
         setPositionXy();
 
