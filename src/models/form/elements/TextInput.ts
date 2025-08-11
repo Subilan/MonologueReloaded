@@ -6,7 +6,7 @@ export interface TextInputCheck {
 
 export type PartialExcept<T, K extends keyof T> = Partial<Omit<T, K>> & Pick<T, K>;
 
-export interface TextInputConfig {
+export interface TextInputFields {
 	type: 'number' | 'text' | 'search' | 'url' | 'email' | 'tel' | 'time' | 'integer' | 'password' | 'date' | 'datetime-local' | 'month' | 'week' | 'currency';
 	max: number;
 	min: number;
@@ -17,4 +17,10 @@ export interface TextInputConfig {
 	multiline: number;
 	helperText: string;
 	showCharacterCount: boolean;
+}
+
+
+export interface TextInput {
+	checks: TextInputCheck[][];
+	fields: PartialExcept<TextInputFields, 'autoComplete'>[];
 }

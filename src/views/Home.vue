@@ -4,15 +4,8 @@
 </script>
 
 <template>
-    <Page narrow-width>
+    <Page title="仪表盘">
         <Layout>
-            <LayoutSection>
-                <Box padding-inline="200" padding-block-start="400">
-                    <Text as="h2" variant="heading3xl">
-                        仪表盘
-                    </Text>
-                </Box>
-            </LayoutSection>
             <LayoutSection>
                 <Card roundedAbove="sm">
                     <Box padding-block-end="200">

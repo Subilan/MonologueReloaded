@@ -3,20 +3,20 @@
     import { computed, ref, type PropType } from 'vue';
     import { Select } from '@ownego/polaris-vue';
     import FormElement from '../FormElement.vue';
-    import type { FormElements } from '@/models/form/Form';
+    import type { FormEl, SimpleResult } from '@/models/form/Form';
 
     const props = defineProps({
-        config: {
-            type: Object as PropType<FormElements.SelectObject>,
+        self: {
+            type: Object as PropType<FormEl<'select'>>,
             required: true
         }
     });
 
     const selected = ref('');
-    const allowEmpty = props.config.options.some(x => x.value === '');
+    const allowEmpty = props.self.config.options.some(x => x.value === '');
 
     const finalOptions = computed(() => {
-        let base = props.config.options;
+        let base = props.self.config.options;
 
         if (!allowEmpty) base.push({
             label: '请选择',
@@ -26,7 +26,7 @@
         return base;
     });
 
-    function get(): FormElements.SimpleResult<string> {
+    function get(): SimpleResult<string> {
         return {
             valid: allowEmpty || selected.value.trim().length > 0,
             value: selected.value
@@ -40,6 +40,6 @@
 
 <template>
     <FormElement>
-        <Select :options="finalOptions" v-model="selected" :help-text="config.helperText" />
+        <Select :options="finalOptions" v-model="selected" :help-text="self.config.helperText" />
     </FormElement>
 </template>
