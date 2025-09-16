@@ -1,6 +1,5 @@
 <script setup lang="ts">
-    import { Box, Card, InlineStack } from '@ownego/polaris-vue';
-    import Draggable from './Draggable.vue';
+    import { BlockStack, Box, Card, InlineStack } from '@ownego/polaris-vue';
 
     const props = defineProps({
         title: {
@@ -12,21 +11,19 @@
         description: {
             type: String
         },
-        identifier: {
-            type: String,
-            default: ''
-        },
         classNames: {
             type: String,
             default: ''
         }
     });
-
 </script>
 
 <template>
     <div class="wrapper" :class="classNames">
-        <Draggable :identifier="identifier">
+        <BlockStack gap="400">
+            <div class="add-component-placeholder top">
+                在此处新增控件
+            </div>
             <Card ref="card">
                 <Box padding-block-end="400">
                     <InlineStack gap="400">
@@ -44,7 +41,34 @@
                 </Box>
                 <slot />
             </Card>
-        </Draggable>
+            <div class="add-component-placeholder bottom">
+                在此处新增控件
+            </div>
+        </BlockStack>
     </div>
-    <hr class="form-element-hr"/>
 </template>
+
+<style lang="scss" scoped>
+.add-component-placeholder {
+    text-align: center;
+    padding: 4px;
+    border-radius: var(--p-border-radius-200);
+    border: 1px dashed var(--p-color-text-disabled);
+    color: var(--p-color-text-secondary);
+    display: none;
+}
+
+.wrapper {
+    &.component-at-top {
+        .top {
+            display: block;
+        }
+    }
+
+    &.component-at-bottom {
+        .bottom {
+            display: block;
+        }
+    }
+}
+</style>

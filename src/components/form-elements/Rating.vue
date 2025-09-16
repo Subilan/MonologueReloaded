@@ -3,11 +3,11 @@
     import FormElement from '../FormElement.vue';
     import { IconStar, IconStarFilled } from '@/icons';
     import { computed, ref, type PropType } from 'vue';
-    import type { FormElements } from '@/models/form/Form';
+    import type { FormEl, SimpleResult } from '@/models/form/Form';
 
     const props = defineProps({
-        config: {
-            type: Object as PropType<FormElements.RatingObject>,
+        self: {
+            type: Object as PropType<FormEl<'rating'>>,
             required: true
         }
     });
@@ -20,8 +20,8 @@
         return level <= 10 && level > 0 ? level : 5;
     }
 
-    const actualValue = ref(new Array(normalizeLevel(props.config.levels)).fill(false));
-    const assumedValues = ref(new Array(normalizeLevel(props.config.levels)).fill(false));
+    const actualValue = ref(new Array(normalizeLevel(props.self.config.levels)).fill(false));
+    const assumedValues = ref(new Array(normalizeLevel(props.self.config.levels)).fill(false));
 
     const value = computed(() => isAssuming.value ? getSum(assumedValues.value) : getSum(actualValue.value));
 
@@ -54,10 +54,10 @@
     }
 
     const ratingMessage = computed(() => {
-        return value.value === 0 ? '' : props.config.ratingMessages[value.value - 1];
+        return value.value === 0 ? '' : props.self.config.ratingMessages[value.value - 1];
     })
 
-    function get(): FormElements.SimpleResult<number> {
+    function get(): SimpleResult<number> {
         return {
             value: value.value,
             valid: value.value > 0
@@ -75,7 +75,7 @@
             <InlineStack align="center" style="width: 30%" @mouseleave="onRatingLeave()" @mouseenter="onRatingEnter()">
                 <Icon @click="confirm = true" @mouseenter="onIconMouseEnter(i - 1)" draggable="false"
                     class="rating-icon" :source="assumedValues[i - 1] ? IconStarFilled : IconStar"
-                    v-for="i in props.config.levels" />
+                    v-for="i in props.self.config.levels" />
             </InlineStack>
             <Box padding-block-start="400">
                 <Text as="p" variant="bodyLg">

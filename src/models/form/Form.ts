@@ -1,68 +1,48 @@
-import type { ChoiceOption } from './elements/Choice';
-import type { SelectOption } from './elements/Select';
-import type { PartialExcept, TextInputCheck, TextInputConfig } from './elements/TextInput';
+import { v4 } from 'uuid';
+import type { Choice } from './elements/Choice';
+import type { ParagraphInput } from './elements/ParagraphInput';
+import type { Rating } from './elements/Rating';
+import type { Select } from './elements/Select';
+import type { Slider } from './elements/Slider';
+import type { TextInput } from './elements/TextInput';
 
-const FormElementTypes = ['choice', 'select', 'text_input', 'paragraph_input', 'slider', 'rating'] as const;
+const FormElementTypes = ['choice', 'select', 'text_input', 'paragraph_input', 'slider', 'rating', 'unknown'] as const;
 export type FormElementType = (typeof FormElementTypes)[number];
 
-export namespace FormElements {
-	export type Object = ChoiceObject | SelectObject | TextInputObject | SliderObject | RatingObject | ParagraphInputObject;
+export interface ResultBase {
+	valid: boolean;
+}
 
-	export interface ResultBase {
-		valid: boolean;
-	}
+export interface SimpleResult<T> extends ResultBase {
+	value: T;
+}
 
-	export interface SimpleResult<T> extends ResultBase {
-		value: T;
-	}
+export type FormElementBase = {
+	description: string;
+	title: string;
+	identifier: string;
+};
 
-	interface Base {
-		type: FormElementType;
-		description?: string;
-		title?: string;
-		identifier?: string;
-	}
+// Type字段字面值与FormElement映射
+interface FormElementMap {
+	choice: Choice;
+	select: Select;
+	text_input: TextInput;
+	paragraph_input: ParagraphInput;
+	slider: Slider;
+	rating: Rating;
+	unknown: Object;
+}
 
-	export interface ChoiceObject extends Base {
-		isMultiple: boolean;
-		hasOther: boolean;
-		otherLabel?: string;
-		choices: ChoiceOption[];
-		type: 'choice';
-	}
+export type FormElement<T extends FormElementType = FormElementType> = FormElementBase & { type: T; config: FormElementMap[T] };
+export type FormEl<T extends FormElementType = FormElementType> = FormElement<T>; // alias
 
-	export interface SelectObject extends Base {
-		helperText?: string;
-		options: SelectOption[];
-		type: 'select';
-	}
-
-	export interface ParagraphInputObject extends Base {
-		template: string;
-		type: 'paragraph_input';
-	}
-
-	export interface TextInputObject extends Base {
-		checks: TextInputCheck[][];
-		configs: PartialExcept<TextInputConfig, 'autoComplete'>[];
-		type: 'text_input';
-	}
-
-	export interface SliderObject extends Base {
-		minValue?: number;
-		maxValue?: number;
-		step?: number;
-		prefix?: string;
-		suffix?: string;
-		isRange?: boolean;
-		output?: boolean;
-		label?: string;
-		type: 'slider';
-	}
-
-	export interface RatingObject extends Base {
-		levels: number;
-		ratingMessages: string[];
-		type: 'rating';
-	}
+export function newElement<T extends FormElementType>(type: T, config: FormElementMap[T], title = '', description = '') {
+	return {
+		type,
+		config,
+		description,
+		title,
+		identifier: v4()
+	} as FormElement<T>;
 }

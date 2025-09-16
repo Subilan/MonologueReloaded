@@ -1,10 +1,19 @@
 <script setup lang="ts">
     import { InlineGrid, InlineStack } from '@ownego/polaris-vue';
     import Draggable from './Draggable.vue';
+    import type { PropType } from 'vue';
+    import type { FormElementType } from '@/models/form/Form';
+
+    const props = defineProps({
+        name: {
+            type: String as PropType<FormElementType>,
+            required: true
+        }
+    })
 </script>
 
 <template>
-    <Draggable>
+    <Draggable :data="name">
         <div class="form-element-shortcut">
             <InlineGrid columns="20px 2fr" gap="100">
                 <slot />
