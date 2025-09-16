@@ -4,17 +4,17 @@
     import { computed, ref, type PropType } from 'vue';
     import type { ParagraphInputResult } from '@/models/form/elements/ParagraphInput';
     import { compileTemplateConfiguration, extractTemplateConfiguration } from '@/func/form/paragraph-input';
-    import type { FormElements } from '@/models/form/Form';
+    import type { FormEl } from '@/models/form/Form';
 
     const props = defineProps({
-        config: {
-            type: Object as PropType<FormElements.ParagraphInputObject>,
+        self: {
+            type: Object as PropType<FormEl<'paragraph_input'>>,
             required: true
         }
     });
 
-    const templateSplitted = props.config.template.split(/\[.*?\]/);
-    const templateConfigurations = compileTemplateConfiguration(extractTemplateConfiguration(props.config.template));
+    const templateSplitted = props.self.config.template.split(/\[.*?\]/);
+    const templateConfigurations = compileTemplateConfiguration(extractTemplateConfiguration(props.self.config.template));
 
     // console.log(templateConfigurations)
 

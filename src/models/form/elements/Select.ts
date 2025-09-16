@@ -3,3 +3,8 @@ export interface SelectOption {
     value: string,
     helpText?: string
 }
+
+export interface Select {
+	helperText?: string;
+	options: SelectOption[];
+}

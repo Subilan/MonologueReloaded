@@ -3,11 +3,11 @@
     import FormElement from '../FormElement.vue';
     import { computed, h, ref, resolveComponent, type PropType } from 'vue';
     import type { ChoiceResult } from '@/models/form/elements/Choice';
-    import type { FormElements } from '@/models/form/Form';
+    import type { FormEl } from '@/models/form/Form';
 
     const props = defineProps({
-        config: {
-            type: Object as PropType<FormElements.ChoiceObject>,
+        self: {
+            type: Object as PropType<FormEl<'choice'>>,
             required: true
         }
     });
@@ -31,11 +31,11 @@
         //     { label: 'Required', value: 'required' }
         // ];
 
-        let base = [...props.config.choices];
+        let base = [...props.self.config.choices];
 
-        if (props.config.hasOther) {
+        if (props.self.config.hasOther) {
             base.push({
-                label: props.config.otherLabel || 'Other',
+                label: props.self.config.otherLabel || 'Other',
                 value: 'other',
                 renderChildren: selected.value.includes('other') && otherChoice
             })
@@ -59,6 +59,6 @@
 
 <template>
     <FormElement>
-        <ChoiceList :choices="finalChoices" v-model="selected" :allow-multiple="config.isMultiple" />
+        <ChoiceList :choices="finalChoices" v-model="selected" :allow-multiple="self.config.isMultiple" />
     </FormElement>
 </template>

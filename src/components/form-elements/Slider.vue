@@ -2,18 +2,18 @@
     import { RangeSlider } from '@ownego/polaris-vue';
     import FormElement from '../FormElement.vue';
     import { ref, type PropType } from 'vue';
-    import type { FormElements } from '@/models/form/Form';
+    import type { FormEl, SimpleResult } from '@/models/form/Form';
 
     const props = defineProps({
-        config: {
-            type: Object as PropType<FormElements.SliderObject>,
+        self: {
+            type: Object as PropType<FormEl<'slider'>>,
             required: true
         }
     });
 
-    const value = ref(props.config.isRange ? [0, 0] as [number, number] : 0);
+    const value = ref(props.self.config.isRange ? [0, 0] as [number, number] : 0);
 
-    function get(): FormElements.SimpleResult<number | number[]> {
+    function get(): SimpleResult<number | number[]> {
         return {
             valid: true,
             value: value.value
@@ -27,7 +27,6 @@
 
 <template>
     <FormElement>
-        <RangeSlider :label="config.label" v-model="value" :output="config.output" :min="config.minValue"
-            :max="config.maxValue" :step="config.step" :prefix="config.prefix" :suffix="config.suffix" />
+        <RangeSlider :label="self.config.label" v-model="value" v-bind="self.config" />
     </FormElement>
 </template>

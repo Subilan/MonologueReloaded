@@ -13,7 +13,6 @@ export namespace RequestApis {
     export const CHECK_USER = API_USER_GROUP_PREFIX + '/check';
 }
 
-
 export const RET_OK = {
 	ok: true,
 	data: null
