@@ -15,11 +15,10 @@
 <script lang="ts" setup>
     import useBus from '@/composables/useBus';
     import events from '@/events';
-    import { useEventBus } from '@vueuse/core';
     import { onMounted, reactive, ref, useTemplateRef } from 'vue';
 
     const props = defineProps({
-        identifier: {
+        data: {
             type: String,
             default: ''
         }
@@ -69,7 +68,7 @@
                 right: rect?.right || 0,
                 top: rect?.top || 0,
                 bottom: rect?.bottom || 0,
-                identifier: props.identifier,
+                data: props.data,
                 direction: current.y > prevY ? 'down' : 'up'
             });
         }

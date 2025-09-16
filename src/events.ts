@@ -1,12 +1,12 @@
 // import type { EventBusKey } from '@vueuse/core';
 
-type EventPayloadTypes = {
+export type EventPayloadTypes = {
 	DRAGGABLE_DRAG: {
 		left: number;
 		right: number;
 		top: number;
 		bottom: number;
-		identifier: string;
+		data: string;
 		direction: 'up' | 'down';
 	};
 };
