@@ -44,9 +44,11 @@
         </div>
     </Dlg>
 
-    <Dlg v-model="modalAddAdvanced" title="高级添加" primary-action-name="执行" :primary-action-disabled="!modalAddAdvancedObjectValid">
+    <Dlg v-model="modalAddAdvanced" title="高级添加" primary-action-name="执行"
+        :primary-action-disabled="!modalAddAdvancedObjectValid">
         <FormLayout>
-            <PolarisSelect v-model="modalAddAdvancedObject.type" label="题目类型" :options="FormElementOptions.concat(PleaseSelectOption)" />
+            <PolarisSelect v-model="modalAddAdvancedObject.type" label="题目类型"
+                :options="FormElementOptions.concat(PleaseSelectOption)" />
             <RangeSlider v-model="modalAddAdvancedObject.count" :min="1" :max="50" :step="1"
                 :suffix="`${modalAddAdvancedObject.count} 个`" label="题目数量" />
             <InlineGrid gap="400" columns="1fr auto">
@@ -75,15 +77,14 @@
     import useBus from '@/composables/useBus';
     import events, { type EventPayloadTypes } from '@/events';
     import { computed, reactive, ref, useTemplateRef } from 'vue';
-    import type { BoundingClientRect } from '@/types';
     import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
     import DashedCard from '../DashedCard.vue';
     import Empty from '../ui/Empty.vue';
     import Dlg from '../ui/Dlg.vue';
     import { Box, Button, Icon, InlineGrid, InlineStack, RangeSlider } from '@ownego/polaris-vue';
     import CardSectionTitle from '../CardSectionTitle.vue';
-    import isEmpty from '@/func/text/isEmpty';
-import { PleaseSelectOption } from '@/static/Common';
+    import { PleaseSelectOption } from '@/static/Common';
+    import type {BoundingClientRect} from "@/types/BoundingClientRect.ts";
 
     const modalAddNew = ref(false);
     const modalAddAdvanced = ref(false);

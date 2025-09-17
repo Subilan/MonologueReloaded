@@ -1,0 +1,2 @@
+export type Tone = 'warning' | 'critical' | 'success' | 'info';
+

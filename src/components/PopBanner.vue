@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import type { Tone } from '@/types';
     import { Banner, LayoutSection } from '@ownego/polaris-vue';
     import { ref, type PropType } from 'vue';
+    import type {Tone} from "@/types/Common.ts";
 
     const props = defineProps({
         tone: {

@@ -1,6 +1,6 @@
 import { IconDropdown, IconMultipleChoice, IconParagraphInput, IconSlider, IconStar, IconTextInput } from '@/icons';
 import type { FormElementType } from '@/models/form/Form';
-import type { Options } from '@/types';
+import type {Options} from "@/types/Options.ts";
 
 type FormElementInfo = Record<
 	FormElementType,
