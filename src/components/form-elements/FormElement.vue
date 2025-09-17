@@ -73,6 +73,16 @@
             display: block;
         }
     }
+
+    .Polaris-ShadowBevel:before {
+        transition: all .2s ease;
+    }
+
+    &.selected {
+        .Polaris-ShadowBevel:before {
+            border: 2px inset black;
+        }
+    }
 }
 .handle {
     cursor: move;

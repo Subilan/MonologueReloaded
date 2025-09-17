@@ -5,8 +5,8 @@
   import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
   import { type FormElement, newElement } from '@/models/form/Form';
   import router from '@/router';
-  import { Card, Checkbox, Dd, DescriptionList, Dt, FormLayout, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
-  import { reactive, ref, useTemplateRef, watch } from 'vue';
+  import { BlockStack, Card, Checkbox, Dd, DescriptionList, Dt, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
+  import { reactive, ref, useTemplateRef } from 'vue';
   import BuilderForm from '@/components/builder/BuilderForm.vue';
   import useFormElementDraggable from '@/composables/useFormElementDraggable';
   import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
@@ -142,29 +142,30 @@
               </FormElementShortcutContainer>
             </template>
           </Card>
-          <BuilderForm v-model:settings="builderFormSettings" ref="builder_form_ref"
-            v-model="formElements" />
-          <Card>
-            <CardTitle>
-              表单总览
-            </CardTitle>
-            <DescriptionList gap="tight">
-              <Dt>元素个数</Dt>
-              <Dd>{{ formElements.length }}</Dd>
-              <Dt>创建者</Dt>
-              <Dd>
-                Abc
-              </Dd>
-              <Dt>创建时间</Dt>
-              <Dd>
-                <Tooltip :content="`1970-01-01 13:00:00`">13 天前</Tooltip>
-              </Dd>
-              <Dt>最近保存</Dt>
-              <Dd>
-                <Tooltip :content="`1970-01-01 13:00:00`">刚刚</Tooltip>
-              </Dd>
-            </DescriptionList>
-          </Card>
+          <BuilderForm v-model:settings="builderFormSettings" ref="builder_form_ref" v-model="formElements" />
+          <BlockStack gap="400">
+            <Card>
+              <CardTitle>
+                表单总览
+              </CardTitle>
+              <DescriptionList gap="tight">
+                <Dt>元素个数</Dt>
+                <Dd>{{ formElements.length }}</Dd>
+                <Dt>创建者</Dt>
+                <Dd>
+                  Abc
+                </Dd>
+                <Dt>创建时间</Dt>
+                <Dd>
+                  <Tooltip :content="`1970-01-01 13:00:00`">13 天前</Tooltip>
+                </Dd>
+                <Dt>最近保存</Dt>
+                <Dd>
+                  <Tooltip :content="`1970-01-01 13:00:00`">刚刚</Tooltip>
+                </Dd>
+              </DescriptionList>
+            </Card>
+          </BlockStack>
         </InlineGrid>
       </LayoutSection>
     </Layout>

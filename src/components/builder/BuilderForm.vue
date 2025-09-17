@@ -3,8 +3,9 @@
         <vue-draggable :animation="150" handle=".handle" ghost-class="phantom" v-model="formElements"
             class="builder-elements">
             <!-- @vue-ignore -->
-            <component ref="formElementComponent" v-for="(obj, i) in formElements" :is="getComponent(obj.type)"
-                :self="obj" :index="settings.showIndex ? i + 1 : undefined" :title="obj.title || 'default title'"
+            <component :class="{ selected: formElementSelected[i] }" @click="() => handleElementClick(i)"
+                ref="formElementComponent" v-for="(obj, i) in formElements" :is="getComponent(obj.type)" :self="obj"
+                :index="settings.showIndex ? i + 1 : undefined" :title="obj.title || 'default title'"
                 :description="obj.description" />
         </vue-draggable>
 
@@ -79,7 +80,7 @@
     import { VueDraggable } from 'vue-draggable-plus';
     import useBus from '@/composables/useBus';
     import events, { type EventPayloadTypes } from '@/events';
-    import { computed, reactive, ref, useTemplateRef } from 'vue';
+    import { computed, onMounted, reactive, ref, useTemplateRef } from 'vue';
     import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
     import DashedCard from '../DashedCard.vue';
     import Empty from '../ui/Empty.vue';
@@ -122,6 +123,38 @@
     const formElements = defineModel<FormElement[]>({
         required: true,
     });
+
+    const formElementSelected = reactive<Record<number, boolean>>({});
+    const formElementSelectedPrev = ref(-1);
+
+    function resetFormElementSelection() {
+        // @ts-ignore
+        Object.keys(formElementSelected).forEach(k => formElementSelected[k] = false);
+    }
+
+    function handleElementClick(index: number) {
+        resetFormElementSelection();
+        
+        if (formElementSelectedPrev.value === index) {
+            formElementSelected[index] = false;
+            formElementSelectedPrev.value = -1;
+        } else {
+            formElementSelected[index] = true;
+            formElementSelectedPrev.value = index;
+        }
+
+        console.log(formElementSelected);
+    }
+
+    onMounted(() => {
+        document.addEventListener('click', e => {
+            const el = e.target as HTMLElement;
+            if (!el.matches('.builder-elements *')) {
+                resetFormElementSelection();
+                formElementSelectedPrev.value = -1;
+            }
+        })
+    })
 
     // 处理新表单元素的拖入
 
