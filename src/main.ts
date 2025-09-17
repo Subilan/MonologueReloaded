@@ -1,6 +1,6 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
 import polaris from '@ownego/polaris-vue';
 import '@/assets/fonts/dm-serif-display/font.css';
 import '@/assets/fonts/ibm-plex-sans/font.css';
@@ -14,16 +14,16 @@ import { createI18n } from 'vue-i18n';
 type MessageSchema = typeof LocaleZh;
 
 const i18n = createI18n<[MessageSchema], 'zh'>({
-    locale: 'zh',
-    messages: {
-        zh: LocaleZh
-    }
+	locale: 'zh',
+	messages: {
+		zh: LocaleZh
+	}
 });
 
-const app = createApp(App)
+const app = createApp(App);
 
 app.use(router);
 app.use(polaris);
 app.use(i18n);
 
-app.mount('#app')
+app.mount('#app');

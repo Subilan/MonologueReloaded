@@ -1,14 +1,18 @@
 <script setup lang="ts">
-    import { InlineGrid, InlineStack } from '@ownego/polaris-vue';
+    import { InlineGrid, InlineStack, Tooltip } from '@ownego/polaris-vue';
     import Draggable from './Draggable.vue';
     import type { PropType } from 'vue';
     import type { FormElementType } from '@/models/form/Form';
-import useFormElementDraggable from '@/composables/useFormElementDraggable';
+    import useFormElementDraggable from '@/composables/useFormElementDraggable';
+    import VFragment from './ui/VFragment.vue';
 
     const props = defineProps({
-        name: {
+        type: {
             type: String as PropType<FormElementType>,
             required: true
+        },
+        description: {
+            type: String
         }
     });
 
@@ -16,12 +20,14 @@ import useFormElementDraggable from '@/composables/useFormElementDraggable';
 </script>
 
 <template>
-    <Draggable :disabled="!draggable" :data="name">
-        <div class="form-element-shortcut">
-            <InlineGrid columns="20px 2fr" gap="100">
-                <slot />
-            </InlineGrid>
-        </div>
+    <Draggable :disabled="!draggable" :data="type">
+        <component :is="description ? Tooltip : VFragment" :content="description">
+            <div class="form-element-shortcut">
+                <InlineGrid columns="20px 2fr" gap="100">
+                    <slot />
+                </InlineGrid>
+            </div>
+        </component>
     </Draggable>
 </template>
 

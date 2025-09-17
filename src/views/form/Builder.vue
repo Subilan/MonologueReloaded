@@ -11,6 +11,7 @@
   import { ref, watch } from 'vue';
   import BuilderForm from '@/components/builder/BuilderForm.vue';
   import useFormElementDraggable from '@/composables/useFormElementDraggable';
+  import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
 
   const dragMode = ref(false);
 
@@ -95,6 +96,8 @@
     v.identifier = makeId(10);
   });
 
+  const emptyFormElements = ref([]);
+
   async function save() {
 
   }
@@ -131,47 +134,21 @@
             <CardTitle no-padding-block-end>
               表单元素
             </CardTitle>
-            <CardSectionTitle>
-              选择
-            </CardSectionTitle>
-            <FormElementShortcutContainer>
-              <FormElementShortcut name="choice">
-                <Icon :source="IconMultipleChoice" />
-                选择题
-              </FormElementShortcut>
-              <FormElementShortcut name="select">
-                <Icon :source="IconDropdown" />
-                下拉
-              </FormElementShortcut>
-            </FormElementShortcutContainer>
-            <CardSectionTitle>
-              填空
-            </CardSectionTitle>
-            <FormElementShortcutContainer>
-              <FormElementShortcut name="text_input">
-                <Icon :source="IconTextInput" />
-                填空
-              </FormElementShortcut>
-              <FormElementShortcut name="paragraph_input">
-                <Icon :source="IconParagraphInput" />
-                段落填空
-              </FormElementShortcut>
-            </FormElementShortcutContainer>
-            <CardSectionTitle>
-              评估
-            </CardSectionTitle>
-            <FormElementShortcutContainer>
-              <FormElementShortcut name="slider">
-                <Icon :source="IconSlider" />
-                滑块
-              </FormElementShortcut>
-              <FormElementShortcut name="rating">
-                <Icon :source="IconStar" />
-                评分
-              </FormElementShortcut>
-            </FormElementShortcutContainer>
+
+            <template v-for="[groupName, groupTypes] in Object.entries(FormElementGroupMap)">
+              <CardSectionTitle>
+                {{ groupName }}
+              </CardSectionTitle>
+
+              <FormElementShortcutContainer>
+                <FormElementShortcut :description="FormElementInfo[type].description" :type="type" v-for="type in groupTypes">
+                  <Icon :source="FormElementInfo[type].icon" />
+                  {{ FormElementInfo[type].name }}
+                </FormElementShortcut>
+              </FormElementShortcutContainer>
+            </template>
           </Card>
-          <BuilderForm :drag-disabled="!dragMode" v-model="formElements" />
+          <BuilderForm :drag-disabled="!dragMode" v-model="emptyFormElements" />
           <Card>
             <CardTitle>
               元素属性

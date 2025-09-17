@@ -7,7 +7,7 @@
         } : {}">
         <slot />
     </div>
-    <div background="bg-surface-trinary" class="dragged-away-skeleton" v-if="isDragging" :style="{
+    <div background="bg-surface-trinary" class="dashed-card" v-if="isDragging" :style="{
         height
     }" />
 </template>
@@ -141,11 +141,5 @@
         opacity: .7;
         z-index: 200;
     }
-}
-
-.dragged-away-skeleton {
-    display: block;
-    border-radius: var(--p-border-radius-200);
-    border: 1px dashed var(--p-color-border-tertiary);
 }
 </style>
