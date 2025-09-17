@@ -1,6 +1,6 @@
 <script lang="ts" setup>
     import { ChoiceList } from '@ownego/polaris-vue';
-    import FormElement from '../FormElement.vue';
+    import FormElement from './FormElement.vue';
     import { computed, h, ref, resolveComponent, type PropType } from 'vue';
     import type { ChoiceResult } from '@/models/form/elements/Choice';
     import type { FormEl } from '@/models/form/Form';

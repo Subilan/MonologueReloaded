@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { RangeSlider } from '@ownego/polaris-vue';
-    import FormElement from '../FormElement.vue';
+    import FormElement from './FormElement.vue';
     import { ref, type PropType } from 'vue';
     import type { FormEl, SimpleResult } from '@/models/form/Form';
 

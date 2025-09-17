@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { Icon, InlineStack } from '@ownego/polaris-vue';
-    import FormElement from '../FormElement.vue';
+    import FormElement from './FormElement.vue';
     import { IconStar, IconStarFilled } from '@/icons';
     import { computed, ref, type PropType } from 'vue';
     import type { FormEl, SimpleResult } from '@/models/form/Form';

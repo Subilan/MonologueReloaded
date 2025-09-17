@@ -2,7 +2,7 @@
     import type { SelectOption } from '@/models/form/elements/Select';
     import { computed, ref, type PropType } from 'vue';
     import { Select } from '@ownego/polaris-vue';
-    import FormElement from '../FormElement.vue';
+    import FormElement from './FormElement.vue';
     import type { FormEl, SimpleResult } from '@/models/form/Form';
 
     const props = defineProps({

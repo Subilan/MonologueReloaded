@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref, type PropType } from 'vue';
-    import FormElement from '../FormElement.vue';
+    import FormElement from './FormElement.vue';
     import ConfiguredTextField from '../ConfiguredTextField.vue';
     import { BlockStack } from '@ownego/polaris-vue';
     import type { FormEl, SimpleResult } from '@/models/form/Form';

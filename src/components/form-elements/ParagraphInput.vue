@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { TextField, Select } from '@ownego/polaris-vue';
-    import FormElement from '../FormElement.vue';
+    import FormElement from './FormElement.vue';
     import { computed, ref, type PropType } from 'vue';
     import type { ParagraphInputResult } from '@/models/form/elements/ParagraphInput';
     import { compileTemplateConfiguration, extractTemplateConfiguration } from '@/func/form/paragraph-input';
