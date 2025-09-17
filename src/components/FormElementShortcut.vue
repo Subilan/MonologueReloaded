@@ -35,7 +35,7 @@
 </script>
 
 <template>
-    <Draggable @drag="isDragging = true" @dragstop="handleDragStop" :disabled="!draggable" :data="type">
+    <Draggable no-cursor-change @drag="isDragging = true" @dragstop="handleDragStop" :disabled="!draggable" :data="type">
         <component :is="description ? Tooltip : VFragment" :content="description">
             <div @click="handleShortcutClick" class="form-element-shortcut">
                 <InlineGrid columns="20px 2fr" gap="100">

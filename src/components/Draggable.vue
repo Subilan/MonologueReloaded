@@ -1,6 +1,6 @@
 <template>
-    <div ref="draggable-wrapper" class="draggable-wrapper" :class="{ draggable: !disabled, dragging: isDragging }"
-        @mousedown="startDrag" :style="isDragging ? {
+    <div ref="draggable-wrapper" class="draggable-wrapper"
+        :class="{ draggable: !disabled, dragging: isDragging, noCursorChange }" @mousedown="startDrag" :style="isDragging ? {
             left: current.x + 'px',
             top: current.y + 'px',
             width
@@ -23,6 +23,10 @@
             default: ''
         },
         disabled: {
+            type: Boolean,
+            default: false,
+        },
+        noCursorChange: {
             type: Boolean,
             default: false,
         }
@@ -134,12 +138,14 @@
 .draggable-wrapper {
     user-select: none;
 
-    &:not(.draggable) {
-        cursor: pointer;
-    }
+    &:not(.noCursorChange) {
+        &:not(.draggable) {
+            cursor: pointer;
+        }
 
-    &.draggable {
-        cursor: move;
+        &.draggable {
+            cursor: move;
+        }
     }
 
     &.dragging {
