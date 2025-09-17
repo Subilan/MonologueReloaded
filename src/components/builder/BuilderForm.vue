@@ -1,6 +1,6 @@
 <template>
     <div v-if="formElements.length">
-        <vue-draggable :animation="150" :disabled="dragDisabled" ghost-class="phantom" v-model="formElements"
+        <vue-draggable :animation="150" handle=".handle" ghost-class="phantom" v-model="formElements"
             class="builder-elements">
             <!-- @vue-ignore -->
             <component ref="formElementComponent" v-for="(obj, i) in formElements" :is="getComponent(obj.type)"
@@ -101,13 +101,6 @@
         titleTemplate: '',
     })
     const modalAddAdvancedObjectValid = computed(() => modalAddAdvancedObject.type !== '' && modalAddAdvancedObject.count >= 1)
-
-    const props = defineProps({
-        dragDisabled: {
-            type: Boolean,
-            default: false
-        }
-    })
 
     function getComponent(type: FormElementType) {
         switch (type) {

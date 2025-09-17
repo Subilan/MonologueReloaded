@@ -7,6 +7,8 @@ import FormTextbox from '@mdi/svg/svg/form-textbox.svg';
 import TuneVariant from '@mdi/svg/svg/tune-variant.svg';
 import StarOutline from '@mdi/svg/svg/star-outline.svg';
 import Star from '@mdi/svg/svg/star.svg';
+import Drag from '@mdi/svg/svg/drag.svg';
+
 
 export {
     RadioBoxMarked as IconSingleChoice,
@@ -17,5 +19,6 @@ export {
     FormTextbox as IconParagraphInput,
     TuneVariant as IconSlider,
     StarOutline as IconStar,
-    Star as IconStarFilled
+    Star as IconStarFilled,
+    Drag
 }

@@ -13,8 +13,6 @@
   import Dlg from '@/components/ui/Dlg.vue';
   import type BuilderFormSettings from '@/types/BuilderFormSettings';
 
-  const dragMode = ref(false);
-
   const formElements = ref<FormElement[]>([
     newElement('choice', {
       isMultiple: true,
@@ -100,8 +98,6 @@
 
   const formElementDraggable = useFormElementDraggable();
 
-  watch(dragMode, v => formElementDraggable.value = v, { immediate: true });
-
   const builderFormRef = useTemplateRef('builder_form_ref');
 
   const modalSettings = ref(false);
@@ -116,21 +112,7 @@
     :primary-action="{
       content: '保存',
       onAction: save
-    }" :action-groups="[
-      {
-        title: '编辑器',
-        actions: [
-          {
-            content: '拖拽模式',
-            helpText: '可自由拖拽控件和组件',
-            active: dragMode,
-            onAction() {
-              dragMode = !dragMode;
-            }
-          }
-        ]
-      },
-    ]" :secondary-actions="[
+    }" :secondary-actions="[
       {
         content: '设置',
         onAction() {
@@ -160,7 +142,7 @@
               </FormElementShortcutContainer>
             </template>
           </Card>
-          <BuilderForm v-model:settings="builderFormSettings" ref="builder_form_ref" :drag-disabled="!dragMode"
+          <BuilderForm v-model:settings="builderFormSettings" ref="builder_form_ref"
             v-model="formElements" />
           <Card>
             <CardTitle>

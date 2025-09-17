@@ -1,5 +1,6 @@
 <script setup lang="ts">
-    import { BlockStack, Box, Card, InlineStack, Text } from '@ownego/polaris-vue';
+    import { Drag } from '@/icons';
+    import { BlockStack, Box, Card, Icon, InlineStack, Text } from '@ownego/polaris-vue';
 
     const props = defineProps({
         title: {
@@ -33,6 +34,8 @@
                         <Text variant="headingLg" as="h2">
                             {{ title }}
                         </Text>
+                        <div class="spacer" />
+                        <Icon :source="Drag" class="handle" />
                     </InlineStack>
                 </Box>
                 <Box padding-block-end="200" v-if="description">
@@ -70,5 +73,8 @@
             display: block;
         }
     }
+}
+.handle {
+    cursor: move;
 }
 </style>
