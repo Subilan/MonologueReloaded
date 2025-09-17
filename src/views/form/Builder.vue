@@ -3,15 +3,15 @@
   import CardTitle from '@/components/CardTitle.vue';
   import FormElementShortcut from '@/components/FormElementShortcut.vue';
   import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
-  import { IconDropdown, IconMultipleChoice, IconTextInput, IconSingleChoice, IconParagraphInput, IconTextInputMultiple, IconSlider, IconStar } from '@/icons';
   import { type FormElement, newElement } from '@/models/form/Form';
   import router from '@/router';
-  import { Badge, Card, Icon, InlineGrid, Layout, LayoutSection, Page } from '@ownego/polaris-vue';
-  import makeId from '@/func/makeId';
-  import { ref, useTemplateRef, watch } from 'vue';
+  import { Card, Checkbox, Dd, DescriptionList, Dt, FormLayout, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
+  import { reactive, ref, useTemplateRef, watch } from 'vue';
   import BuilderForm from '@/components/builder/BuilderForm.vue';
   import useFormElementDraggable from '@/composables/useFormElementDraggable';
   import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
+  import Dlg from '@/components/ui/Dlg.vue';
+  import type BuilderFormSettings from '@/types/BuilderFormSettings';
 
   const dragMode = ref(false);
 
@@ -92,10 +92,6 @@
     })
   ]);
 
-  formElements.value.forEach(v => {
-    v.identifier = makeId(10);
-  });
-
   const emptyFormElements = ref([]);
 
   async function save() {
@@ -107,6 +103,12 @@
   watch(dragMode, v => formElementDraggable.value = v, { immediate: true });
 
   const builderFormRef = useTemplateRef('builder_form_ref');
+
+  const modalSettings = ref(false);
+
+  const builderFormSettings = reactive<BuilderFormSettings>({
+    showIndex: false
+  });
 </script>
 
 <template>
@@ -127,6 +129,13 @@
             }
           }
         ]
+      },
+    ]" :secondary-actions="[
+      {
+        content: '设置',
+        onAction() {
+          modalSettings = true;
+        }
       }
     ]">
     <Layout>
@@ -143,21 +152,48 @@
               </CardSectionTitle>
 
               <FormElementShortcutContainer>
-                <FormElementShortcut :onclick="() => builderFormRef?.appendEmptyFormElement(type)" :description="FormElementInfo[type].description" :type="type" v-for="type in groupTypes">
+                <FormElementShortcut :onclick="() => builderFormRef?.appendEmptyFormElement(type)"
+                  :description="FormElementInfo[type].description" :type="type" v-for="type in groupTypes">
                   <Icon :source="FormElementInfo[type].icon" />
                   {{ FormElementInfo[type].name }}
                 </FormElementShortcut>
               </FormElementShortcutContainer>
             </template>
           </Card>
-          <BuilderForm ref="builder_form_ref" :drag-disabled="!dragMode" v-model="emptyFormElements" />
+          <BuilderForm v-model:settings="builderFormSettings" ref="builder_form_ref" :drag-disabled="!dragMode"
+            v-model="formElements" />
           <Card>
             <CardTitle>
-              元素属性
+              表单总览
             </CardTitle>
+            <DescriptionList gap="tight">
+              <Dt>元素个数</Dt>
+              <Dd>{{ formElements.length }}</Dd>
+              <Dt>创建者</Dt>
+              <Dd>
+                Abc
+              </Dd>
+              <Dt>创建时间</Dt>
+              <Dd>
+                <Tooltip :content="`1970-01-01 13:00:00`">13 天前</Tooltip>
+              </Dd>
+              <Dt>最近保存</Dt>
+              <Dd>
+                <Tooltip :content="`1970-01-01 13:00:00`">刚刚</Tooltip>
+              </Dd>
+            </DescriptionList>
           </Card>
         </InlineGrid>
       </LayoutSection>
     </Layout>
   </Page>
+
+  <Dlg v-model="modalSettings" title="表单设置">
+    <CardTitle>
+      基础设置
+    </CardTitle>
+    <InlineGrid columns="1fr 1fr" gap="400">
+      <Checkbox v-model="builderFormSettings.showIndex" label="显示编号" help-text="是否自动为表单元素编号并显示在标题的左侧" />
+    </InlineGrid>
+  </Dlg>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { BlockStack, Box, Card, InlineStack } from '@ownego/polaris-vue';
+    import { BlockStack, Box, Card, InlineStack, Text } from '@ownego/polaris-vue';
 
     const props = defineProps({
         title: {
@@ -27,7 +27,7 @@
             <Card ref="card">
                 <Box padding-block-end="400">
                     <InlineStack gap="400">
-                        <Text variant="headingLg" as="h2">
+                        <Text variant="headingLg" as="h2" v-if="index">
                             {{ index }}
                         </Text>
                         <Text variant="headingLg" as="h2">

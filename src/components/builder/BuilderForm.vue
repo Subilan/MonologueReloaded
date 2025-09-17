@@ -4,7 +4,8 @@
             class="builder-elements">
             <!-- @vue-ignore -->
             <component ref="formElementComponent" v-for="(obj, i) in formElements" :is="getComponent(obj.type)"
-                :self="obj" :index="i + 1" :title="obj.title || 'default title'" :description="obj.description" />
+                :self="obj" :index="settings.showIndex ? i + 1 : undefined" :title="obj.title || 'default title'"
+                :description="obj.description" />
         </vue-draggable>
 
         <Box padding-block="400">
@@ -36,7 +37,9 @@
                         <Icon :source="FormElementInfo[type].icon" />
                     </div>
                     <div class="element-text">
-                        <div class="name"><Text variant="headingMd">{{ FormElementInfo[type].name }}</Text></div>
+                        <div class="name">
+                            <Text variant="headingMd">{{ FormElementInfo[type].name }}</Text>
+                        </div>
                         <div class="desc">{{ FormElementInfo[type].description }}</div>
                     </div>
                 </div>
@@ -84,7 +87,10 @@
     import { Box, Button, Icon, InlineGrid, InlineStack, RangeSlider } from '@ownego/polaris-vue';
     import CardSectionTitle from '../CardSectionTitle.vue';
     import { PleaseSelectOption } from '@/static/Common';
-    import type {BoundingClientRect} from "@/types/BoundingClientRect.ts";
+    import type { BoundingClientRect } from "@/types/BoundingClientRect.ts";
+    import type BuilderFormSettings from "@/types/BuilderFormSettings.ts";
+
+    const settings = defineModel<BuilderFormSettings>('settings', { required: true });
 
     const modalAddNew = ref(false);
     const modalAddAdvanced = ref(false);
@@ -105,12 +111,18 @@
 
     function getComponent(type: FormElementType) {
         switch (type) {
-            case 'choice': return Choice;
-            case 'select': return Select;
-            case 'text_input': return TextInput;
-            case 'paragraph_input': return ParagraphInput;
-            case 'slider': return Slider;
-            case 'rating': return Rating;
+            case 'choice':
+                return Choice;
+            case 'select':
+                return Select;
+            case 'text_input':
+                return TextInput;
+            case 'paragraph_input':
+                return ParagraphInput;
+            case 'slider':
+                return Slider;
+            case 'rating':
+                return Rating;
         }
     }
 
@@ -208,8 +220,8 @@
     function handleBuilderComponentDragStop() {
         if (!dragAddTargetEl.value || dragAddType.value == '') return;
 
-        dragAddTargetEl.value.classList.remove('component-at-top');
-        dragAddTargetEl.value.classList.remove('component-at-bottom');
+        dragAddTargetEl.value?.classList.remove('component-at-top');
+        dragAddTargetEl.value?.classList.remove('component-at-bottom');
 
         formElements.value.splice(dragAddPosition.value, 0, newElement(dragAddType.value, getDefaultConfiguration(dragAddType.value)));
         resetDragAdd();
