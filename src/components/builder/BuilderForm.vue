@@ -44,7 +44,7 @@
         required: true,
     });
 
-    // 处理控件拖入
+    // 处理新表单元素的拖入
 
     const formElementComponentRef = useTemplateRef('formElementComponent');
 
@@ -56,6 +56,9 @@
     const dragAddTargetEl = ref<HTMLElement | null>(null);
     const dragAddType = ref<FormElementType | ''>('');
 
+    /**
+     * 重置新表单元素的拖动状态
+     */
     function resetDragAdd() {
         dragAddPosition.value = -1;
         dragAddTargetEl.value = null;
@@ -127,6 +130,7 @@
 
     function handleBuilderComponentDragStop() {
         if (!dragAddTargetEl.value || dragAddType.value == '') return;
+        
         dragAddTargetEl.value.classList.remove('component-at-top');
         dragAddTargetEl.value.classList.remove('component-at-bottom');
 

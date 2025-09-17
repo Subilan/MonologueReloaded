@@ -1,6 +1,6 @@
 <template>
-    <div ref="draggable-wrapper" class="draggable-wrapper" :class="{ dragging: isDragging }" @mousedown="startDrag"
-        :style="isDragging ? {
+    <div ref="draggable-wrapper" class="draggable-wrapper" :class="{ draggable: !disabled, dragging: isDragging }"
+        @mousedown="startDrag" :style="isDragging ? {
             left: current.x + 'px',
             top: current.y + 'px',
             width
@@ -21,6 +21,10 @@
         data: {
             type: String,
             default: ''
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
         }
     })
 
@@ -42,6 +46,8 @@
     const bodyOriginalOverflowX = document.body.style.overflowX;
 
     const startDrag = (e: MouseEvent) => {
+        if (props.disabled) return;
+
         recordRectXy();
 
         isDragging.value = true;
@@ -55,6 +61,8 @@
     };
 
     const onDrag = (e: MouseEvent) => {
+        if (props.disabled) return;
+
         if (isDragging.value) {
             const prevY = current.y;
 
@@ -75,6 +83,8 @@
     };
 
     const stopDrag = () => {
+        if (props.disabled) return;
+
         isDragging.value = false;
 
         bus.send(events.DRAGGABLE.DRAGSTOP)
@@ -116,8 +126,15 @@
 
 <style lang="scss">
 .draggable-wrapper {
-    cursor: move;
     user-select: none;
+
+    &:not(.draggable) {
+        cursor: pointer;
+    }
+
+    &.draggable {
+        cursor: move;
+    }
 
     &.dragging {
         position: fixed;

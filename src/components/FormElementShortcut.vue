@@ -3,17 +3,20 @@
     import Draggable from './Draggable.vue';
     import type { PropType } from 'vue';
     import type { FormElementType } from '@/models/form/Form';
+import useFormElementDraggable from '@/composables/useFormElementDraggable';
 
     const props = defineProps({
         name: {
             type: String as PropType<FormElementType>,
             required: true
         }
-    })
+    });
+
+    const draggable = useFormElementDraggable();
 </script>
 
 <template>
-    <Draggable :data="name">
+    <Draggable :disabled="!draggable" :data="name">
         <div class="form-element-shortcut">
             <InlineGrid columns="20px 2fr" gap="100">
                 <slot />

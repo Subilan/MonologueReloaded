@@ -8,8 +8,9 @@
   import router from '@/router';
   import { Badge, Card, Icon, InlineGrid, Layout, LayoutSection, Page } from '@ownego/polaris-vue';
   import makeId from '@/func/makeId';
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import BuilderForm from '@/components/builder/BuilderForm.vue';
+  import useFormElementDraggable from '@/composables/useFormElementDraggable';
 
   const dragMode = ref(false);
 
@@ -97,6 +98,10 @@
   async function save() {
 
   }
+
+  const formElementDraggable = useFormElementDraggable();
+
+  watch(dragMode, v => formElementDraggable.value = v, { immediate: true });
 </script>
 
 <template>
