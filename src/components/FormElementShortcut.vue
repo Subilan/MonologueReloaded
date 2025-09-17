@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { InlineGrid, InlineStack, Tooltip } from '@ownego/polaris-vue';
     import Draggable from './Draggable.vue';
-    import type { PropType } from 'vue';
+    import { ref, type PropType } from 'vue';
     import type { FormElementType } from '@/models/form/Form';
     import useFormElementDraggable from '@/composables/useFormElementDraggable';
     import VFragment from './ui/VFragment.vue';
@@ -20,12 +20,24 @@
     });
 
     const draggable = useFormElementDraggable();
+    const isDragging = ref(false);
+
+    function handleShortcutClick() {
+        if (isDragging.value || !props.onclick) return;
+        props.onclick();
+    }
+
+    function handleDragStop() {
+        setTimeout(() => {
+            isDragging.value = false
+        }, 1);
+    }
 </script>
 
 <template>
-    <Draggable :disabled="!draggable" :data="type">
+    <Draggable @drag="isDragging = true" @dragstop="handleDragStop" :disabled="!draggable" :data="type">
         <component :is="description ? Tooltip : VFragment" :content="description">
-            <div @click="onclick ? onclick() : undefined" class="form-element-shortcut">
+            <div @click="handleShortcutClick" class="form-element-shortcut">
                 <InlineGrid columns="20px 2fr" gap="100">
                     <slot />
                 </InlineGrid>

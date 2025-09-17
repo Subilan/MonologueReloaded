@@ -63,6 +63,8 @@
     const onDrag = (e: MouseEvent) => {
         if (props.disabled) return;
 
+        emit('drag')
+
         if (isDragging.value) {
             const prevY = current.y;
 
@@ -84,6 +86,8 @@
 
     const stopDrag = () => {
         if (props.disabled) return;
+
+        emit('dragstop')
 
         isDragging.value = false;
 
@@ -121,7 +125,9 @@
             recordRectXy();
             setPositionXy();
         })
-    })
+    });
+
+    const emit = defineEmits(['drag', 'dragstop'])
 </script>
 
 <style lang="scss">
