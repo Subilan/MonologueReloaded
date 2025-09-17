@@ -24,7 +24,7 @@ export type FormElementBase = {
 };
 
 // Type字段字面值与FormElement映射
-interface FormElementMap {
+export interface FormElementTypeMap {
 	choice: Choice;
 	select: Select;
 	text_input: TextInput;
@@ -34,10 +34,10 @@ interface FormElementMap {
 	unknown: Object;
 }
 
-export type FormElement<T extends FormElementType = FormElementType> = FormElementBase & { type: T; config: FormElementMap[T] };
+export type FormElement<T extends FormElementType = FormElementType> = FormElementBase & { type: T; config: FormElementTypeMap[T] };
 export type FormEl<T extends FormElementType = FormElementType> = FormElement<T>; // alias
 
-export function newElement<T extends FormElementType>(type: T, config: FormElementMap[T], title = '', description = '') {
+export function newElement<T extends FormElementType>(type: T, config: FormElementTypeMap[T], title = '', description = '') {
 	return {
 		type,
 		config,

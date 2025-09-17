@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-    import type { FormElement, FormElementType } from '@/models/form/Form';
+    import { newElement, type FormElement, type FormElementType } from '@/models/form/Form';
     import Choice from '@/components/form-elements/Choice.vue';
     import Select from '@/components/form-elements/Select.vue';
     import Rating from '@/components/form-elements/Rating.vue';
@@ -20,6 +20,7 @@
     import events, { type EventPayloadTypes } from '@/events';
     import { ref, useTemplateRef } from 'vue';
     import type { BoundingClientRect } from '@/types';
+import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
 
     const props = defineProps({
         dragDisabled: {
@@ -120,9 +121,11 @@
     }
 
     function handleBuilderComponentDragStop() {
-        if (!dragAddTargetEl.value) return;
+        if (!dragAddTargetEl.value || dragAddType.value == '') return;
         dragAddTargetEl.value.classList.remove('component-at-top');
         dragAddTargetEl.value.classList.remove('component-at-bottom');
+
+        formElements.value.splice(dragAddPosition.value, 0, newElement(dragAddType.value, getDefaultConfiguration(dragAddType.value)))
         console.log(dragAddPosition.value, dragAddType.value);
     }
 </script>

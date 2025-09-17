@@ -1,4 +1,3 @@
-import type { Dictionary } from "@/types";
 import type { ResultBase } from "../Form";
 
 export interface ParagraphInputResult extends ResultBase {

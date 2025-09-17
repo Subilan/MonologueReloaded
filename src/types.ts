@@ -2,8 +2,6 @@ export type Feedback<Good = null, Bad = string> = Promise<{ ok: true; data: Good
 
 export type Tone = 'warning' | 'critical' | 'success' | 'info';
 
-export type Dictionary<T> = { [props: string]: T };
-
 export type RectObject = {
 	x: number;
 	y: number;
