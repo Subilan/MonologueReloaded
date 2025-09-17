@@ -6,10 +6,18 @@
             <component ref="formElementComponent" v-for="(obj, i) in formElements" :is="getComponent(obj.type)"
                 :self="obj" :index="i + 1" :title="obj.title || 'default title'" :description="obj.description" />
         </vue-draggable>
+
+        <Box padding-block="400">
+            <InlineStack align="center" gap="200">
+                <Button variant="secondary" @click="modalAddAdvanced = true">高级添加</Button>
+                <Button variant="primary" @click="modalAddNew = true">添加元素</Button>
+            </InlineStack>
+        </Box>
     </div>
     <div v-else>
         <DashedCard>
             <Empty heading="暂无表单元素" :action="{ content: '添加元素', onAction: () => modalAddNew = true }"
+                :secondary-action="() => modalAddAdvanced = true" secondary-action-name="高级添加"
                 image="/images/plus-circle-outline.svg">
                 <p>该表单没有任何元素，请先添加</p>
             </Empty>
@@ -17,13 +25,13 @@
     </div>
 
     <Dlg v-model="modalAddNew" title="添加表单元素">
-
         <div class="section" v-for="[groupName, groupTypes] in Object.entries(FormElementGroupMap)">
             <CardSectionTitle>
                 {{ groupName }}
             </CardSectionTitle>
             <InlineGrid columns="1fr 1fr 1fr" gap="200">
-                <div class="element" v-for="type in groupTypes">
+                <div class="element" v-for="type in groupTypes"
+                    @click="appendEmptyFormElement(type); modalAddNew = false">
                     <div class="element-icon">
                         <Icon :source="FormElementInfo[type].icon" />
                     </div>
@@ -35,13 +43,30 @@
             </InlineGrid>
         </div>
     </Dlg>
+
+    <Dlg v-model="modalAddAdvanced" title="高级添加" primary-action-name="执行" :primary-action-disabled="!modalAddAdvancedObjectValid">
+        <FormLayout>
+            <PolarisSelect v-model="modalAddAdvancedObject.type" label="题目类型" :options="FormElementOptions.concat(PleaseSelectOption)" />
+            <RangeSlider v-model="modalAddAdvancedObject.count" :min="1" :max="50" :step="1"
+                :suffix="`${modalAddAdvancedObject.count} 个`" label="题目数量" />
+            <InlineGrid gap="400" columns="1fr auto">
+                <TextField v-model="modalAddAdvancedObject.titleTemplate" placeholder="为每一个题目设置标题模板" auto-complete="off"
+                    label="标题" help-text="可使用标题模板语法" />
+                <Button variant="plain">模板语法</Button>
+            </InlineGrid>
+        </FormLayout>
+        <template #footer v-if="modalAddAdvancedObjectValid && modalAddAdvancedObject.type !== ''">
+            向表单末尾追加 {{ modalAddAdvancedObject.count }} 个{{ FormElementInfo[modalAddAdvancedObject.type].name }}
+        </template>
+    </Dlg>
 </template>
 
 <script lang="ts" setup>
-    import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
+    import { FormElementGroupMap, FormElementInfo, FormElementOptions } from '@/static/FormElement';
     import { newElement, type FormElement, type FormElementType } from '@/models/form/Form';
     import Choice from '@/components/form-elements/Choice.vue';
     import Select from '@/components/form-elements/Select.vue';
+    import { FormLayout, Select as PolarisSelect, TextField } from '@ownego/polaris-vue';
     import Rating from '@/components/form-elements/Rating.vue';
     import Slider from '@/components/form-elements/Slider.vue';
     import TextInput from '@/components/form-elements/TextInput.vue';
@@ -49,16 +74,26 @@
     import { VueDraggable } from 'vue-draggable-plus';
     import useBus from '@/composables/useBus';
     import events, { type EventPayloadTypes } from '@/events';
-    import { ref, useTemplateRef } from 'vue';
+    import { computed, reactive, ref, useTemplateRef } from 'vue';
     import type { BoundingClientRect } from '@/types';
     import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
     import DashedCard from '../DashedCard.vue';
     import Empty from '../ui/Empty.vue';
     import Dlg from '../ui/Dlg.vue';
-    import { Icon, InlineGrid } from '@ownego/polaris-vue';
+    import { Box, Button, Icon, InlineGrid, InlineStack, RangeSlider } from '@ownego/polaris-vue';
     import CardSectionTitle from '../CardSectionTitle.vue';
+    import isEmpty from '@/func/text/isEmpty';
+import { PleaseSelectOption } from '@/static/Common';
 
     const modalAddNew = ref(false);
+    const modalAddAdvanced = ref(false);
+
+    const modalAddAdvancedObject = reactive({
+        type: '' as FormElementType | '',
+        count: 1,
+        titleTemplate: '',
+    })
+    const modalAddAdvancedObjectValid = computed(() => modalAddAdvancedObject.type !== '' && modalAddAdvancedObject.count >= 1)
 
     const props = defineProps({
         dragDisabled: {
@@ -178,6 +213,14 @@
         formElements.value.splice(dragAddPosition.value, 0, newElement(dragAddType.value, getDefaultConfiguration(dragAddType.value)));
         resetDragAdd();
     }
+
+    function appendEmptyFormElement(type: FormElementType) {
+        formElements.value.push(newElement(type, getDefaultConfiguration(type)));
+    }
+
+    defineExpose({
+        appendEmptyFormElement
+    })
 </script>
 
 <style lang="scss" scoped>

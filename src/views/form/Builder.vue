@@ -8,7 +8,7 @@
   import router from '@/router';
   import { Badge, Card, Icon, InlineGrid, Layout, LayoutSection, Page } from '@ownego/polaris-vue';
   import makeId from '@/func/makeId';
-  import { ref, watch } from 'vue';
+  import { ref, useTemplateRef, watch } from 'vue';
   import BuilderForm from '@/components/builder/BuilderForm.vue';
   import useFormElementDraggable from '@/composables/useFormElementDraggable';
   import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
@@ -105,6 +105,8 @@
   const formElementDraggable = useFormElementDraggable();
 
   watch(dragMode, v => formElementDraggable.value = v, { immediate: true });
+
+  const builderFormRef = useTemplateRef('builder_form_ref');
 </script>
 
 <template>
@@ -141,14 +143,14 @@
               </CardSectionTitle>
 
               <FormElementShortcutContainer>
-                <FormElementShortcut :description="FormElementInfo[type].description" :type="type" v-for="type in groupTypes">
+                <FormElementShortcut :onclick="() => builderFormRef?.appendEmptyFormElement(type)" :description="FormElementInfo[type].description" :type="type" v-for="type in groupTypes">
                   <Icon :source="FormElementInfo[type].icon" />
                   {{ FormElementInfo[type].name }}
                 </FormElementShortcut>
               </FormElementShortcutContainer>
             </template>
           </Card>
-          <BuilderForm :drag-disabled="!dragMode" v-model="emptyFormElements" />
+          <BuilderForm ref="builder_form_ref" :drag-disabled="!dragMode" v-model="emptyFormElements" />
           <Card>
             <CardTitle>
               元素属性

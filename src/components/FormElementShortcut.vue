@@ -13,6 +13,9 @@
         },
         description: {
             type: String
+        },
+        onclick: {
+            type: Function
         }
     });
 
@@ -22,7 +25,7 @@
 <template>
     <Draggable :disabled="!draggable" :data="type">
         <component :is="description ? Tooltip : VFragment" :content="description">
-            <div class="form-element-shortcut">
+            <div @click="onclick ? onclick() : undefined" class="form-element-shortcut">
                 <InlineGrid columns="20px 2fr" gap="100">
                     <slot />
                 </InlineGrid>

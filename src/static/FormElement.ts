@@ -1,5 +1,6 @@
 import { IconDropdown, IconMultipleChoice, IconParagraphInput, IconSlider, IconStar, IconTextInput } from '@/icons';
 import type { FormElementType } from '@/models/form/Form';
+import type { Options } from '@/types';
 
 type FormElementInfo = Record<
 	FormElementType,
@@ -60,3 +61,10 @@ export const FormElementInfo: FormElementInfo = {
 		description: ''
 	}
 };
+
+export const FormElementOptions = Object.entries(FormElementInfo).map(([type, value]) => {
+	return {
+		label: value.name,
+		value: type
+	};
+}).filter(x => x.value !== 'unknown') as Options;
