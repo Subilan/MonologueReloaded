@@ -124,7 +124,7 @@
         <InlineGrid columns="1fr 3fr 1fr" gap="400" align-items="start">
           <Card style="z-index: var(--p-z-index-1);">
             <CardTitle no-padding-block-end>
-              问卷控件
+              表单元素
             </CardTitle>
             <CardSectionTitle>
               选择
@@ -169,7 +169,7 @@
           <BuilderForm :drag-disabled="!dragMode" v-model="formElements" />
           <Card>
             <CardTitle>
-              控件属性
+              元素属性
             </CardTitle>
           </Card>
         </InlineGrid>

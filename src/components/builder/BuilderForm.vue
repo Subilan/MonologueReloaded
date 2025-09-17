@@ -20,7 +20,7 @@
     import events, { type EventPayloadTypes } from '@/events';
     import { ref, useTemplateRef } from 'vue';
     import type { BoundingClientRect } from '@/types';
-import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
+    import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
 
     const props = defineProps({
         dragDisabled: {
@@ -56,6 +56,13 @@ import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
     const dragAddTargetEl = ref<HTMLElement | null>(null);
     const dragAddType = ref<FormElementType | ''>('');
 
+    function resetDragAdd() {
+        dragAddPosition.value = -1;
+        dragAddTargetEl.value = null;
+        dragAddType.value = '';
+    }
+
+    // 处理新的表单元素拖动到已有的表单元素上
     function handleBuilderComponentDrag(payload: EventPayloadTypes['DRAGGABLE_DRAG']) {
         const refs = formElementComponentRef.value as any[];
         const refsMapped = refs.map((x, i) => {
@@ -89,9 +96,7 @@ import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
 
         if (within.length !== 1) {
             // 无效，恢复初始状态
-            dragAddPosition.value = -1;
-            dragAddTargetEl.value = null;
-            dragAddType.value = '';
+            resetDragAdd();
             clearActive();
             return;
         }
@@ -125,8 +130,8 @@ import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
         dragAddTargetEl.value.classList.remove('component-at-top');
         dragAddTargetEl.value.classList.remove('component-at-bottom');
 
-        formElements.value.splice(dragAddPosition.value, 0, newElement(dragAddType.value, getDefaultConfiguration(dragAddType.value)))
-        console.log(dragAddPosition.value, dragAddType.value);
+        formElements.value.splice(dragAddPosition.value, 0, newElement(dragAddType.value, getDefaultConfiguration(dragAddType.value)));
+        resetDragAdd();
     }
 </script>
 
