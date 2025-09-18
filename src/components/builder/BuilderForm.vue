@@ -1,6 +1,6 @@
 <template>
     <div v-if="formElements.length">
-        <vue-draggable :animation="150" handle=".handle" ghost-class="phantom" v-model="formElements"
+        <vue-draggable @end="handleElementDrag" :animation="150" handle=".handle" ghost-class="phantom" v-model="formElements"
             class="builder-elements">
             <!-- @vue-ignore -->
             <component :class="{ selected: formElementSelected[i] }" @click="() => handleElementClick(i)"
@@ -77,10 +77,10 @@
     import Slider from '@/components/form-elements/Slider.vue';
     import TextInput from '@/components/form-elements/TextInput.vue';
     import ParagraphInput from '@/components/form-elements/ParagraphInput.vue';
-    import { VueDraggable } from 'vue-draggable-plus';
+    import { VueDraggable, type SortableEvent } from 'vue-draggable-plus';
     import useBus from '@/composables/useBus';
     import events, { type EventPayloadTypes } from '@/events';
-    import { computed, onMounted, reactive, ref, useTemplateRef } from 'vue';
+    import { computed, onMounted, reactive, ref, useTemplateRef, watch } from 'vue';
     import getDefaultConfiguration from '@/func/form/getDefaultConfiguration';
     import DashedCard from '../DashedCard.vue';
     import Empty from '../ui/Empty.vue';
@@ -128,13 +128,14 @@
     const formElementSelectedPrev = ref(-1);
 
     function resetFormElementSelection() {
+        console.log('reset')
         // @ts-ignore
         Object.keys(formElementSelected).forEach(k => formElementSelected[k] = false);
     }
 
     function handleElementClick(index: number) {
         resetFormElementSelection();
-        
+
         if (formElementSelectedPrev.value === index) {
             formElementSelected[index] = false;
             formElementSelectedPrev.value = -1;
@@ -142,8 +143,6 @@
             formElementSelected[index] = true;
             formElementSelectedPrev.value = index;
         }
-
-        console.log(formElementSelected);
     }
 
     onMounted(() => {
@@ -156,29 +155,33 @@
         })
     })
 
+    watch(formElementSelected,  v => {
+        console.log(v)
+    })
+
     // 处理新表单元素的拖入
 
     const formElementComponentRef = useTemplateRef('formElementComponent');
 
-    const dragAddEventBus = useBus(events.DRAGGABLE.channel);
-    dragAddEventBus.on(events.DRAGGABLE.DRAG, handleBuilderComponentDrag);
-    dragAddEventBus.on(events.DRAGGABLE.DRAGSTOP, handleBuilderComponentDragStop);
+    const newComponentDragEventBus = useBus(events.DRAGGABLE.channel);
+    newComponentDragEventBus.on(events.DRAGGABLE.DRAG, handleNewComponentDrag);
+    newComponentDragEventBus.on(events.DRAGGABLE.DRAGSTOP, handleNewComponentDragStop);
 
-    const dragAddPosition = ref(-1);
-    const dragAddTargetEl = ref<HTMLElement | null>(null);
-    const dragAddType = ref<FormElementType | ''>('');
+    const newComponentPosition = ref(-1);
+    const newComponentTargetEl = ref<HTMLElement | null>(null);
+    const newComponentType = ref<FormElementType | ''>('');
 
     /**
      * 重置新表单元素的拖动状态
      */
-    function resetDragAdd() {
-        dragAddPosition.value = -1;
-        dragAddTargetEl.value = null;
-        dragAddType.value = '';
+    function resetNewComponentDrag() {
+        newComponentPosition.value = -1;
+        newComponentTargetEl.value = null;
+        newComponentType.value = '';
     }
 
     // 处理新的表单元素拖动到已有的表单元素上
-    function handleBuilderComponentDrag(payload: EventPayloadTypes['DRAGGABLE_DRAG']) {
+    function handleNewComponentDrag(payload: EventPayloadTypes['DRAGGABLE_DRAG']) {
         const refs = formElementComponentRef.value as any[] | null;
 
         if (!refs) return;
@@ -214,7 +217,7 @@
 
         if (within.length !== 1) {
             // 无效，恢复初始状态
-            resetDragAdd();
+            resetNewComponentDrag();
             clearActive();
             return;
         }
@@ -228,29 +231,29 @@
         // 防止指针移动速度过快导致class位置不干净（有多个元素有component-at-top/bottom）
         clearActive();
 
-        dragAddType.value = payload.data as FormElementType;
+        newComponentType.value = payload.data as FormElementType;
 
         if (overlapTop > overlapBottom) {
             targetComponent.el.classList.add('component-at-top');
             targetComponent.el.classList.remove('component-at-bottom')
-            dragAddPosition.value = targetComponent.index;
+            newComponentPosition.value = targetComponent.index;
         } else {
             targetComponent.el.classList.add('component-at-bottom');
             targetComponent.el.classList.remove('component-at-top');
-            dragAddPosition.value = Math.min(targetComponent.index + 1, refs.length);
+            newComponentPosition.value = Math.min(targetComponent.index + 1, refs.length);
         }
 
-        dragAddTargetEl.value = targetComponent.el;
+        newComponentTargetEl.value = targetComponent.el;
     }
 
-    function handleBuilderComponentDragStop() {
-        if (!dragAddTargetEl.value || dragAddType.value == '') return;
+    function handleNewComponentDragStop() {
+        if (!newComponentTargetEl.value || newComponentType.value == '') return;
 
-        dragAddTargetEl.value?.classList.remove('component-at-top');
-        dragAddTargetEl.value?.classList.remove('component-at-bottom');
+        newComponentTargetEl.value?.classList.remove('component-at-top');
+        newComponentTargetEl.value?.classList.remove('component-at-bottom');
 
-        formElements.value.splice(dragAddPosition.value, 0, newElement(dragAddType.value, getDefaultConfiguration(dragAddType.value)));
-        resetDragAdd();
+        formElements.value.splice(newComponentPosition.value, 0, newElement(newComponentType.value, getDefaultConfiguration(newComponentType.value)));
+        resetNewComponentDrag();
     }
 
     function appendEmptyFormElement(type: FormElementType) {
@@ -260,6 +263,14 @@
     defineExpose({
         appendEmptyFormElement
     })
+
+    function handleElementDrag(e: SortableEvent) {
+        if (!e.oldIndex || !e.newIndex) return;
+        if (formElementSelected[e.oldIndex] === true) {
+            formElementSelected[e.newIndex] = true;
+            formElementSelected[e.oldIndex] = false;
+        }
+    }
 </script>
 
 <style lang="scss" scoped>
