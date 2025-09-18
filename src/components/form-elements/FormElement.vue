@@ -74,16 +74,17 @@
         }
     }
 
-    .Polaris-ShadowBevel:before {
+    .Polaris-ShadowBevel {
         transition: all .2s ease;
     }
 
     &.selected {
-        .Polaris-ShadowBevel:before {
-            border: 2px inset black;
+        .Polaris-ShadowBevel {
+            box-shadow: 0 0 0 4px rgba($color: black, $alpha: .3)
         }
     }
 }
+
 .handle {
     cursor: move;
 }
