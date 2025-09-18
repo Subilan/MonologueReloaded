@@ -1,7 +1,7 @@
 <template>
     <div v-if="formElements.length">
-        <vue-draggable @end="handleElementDrag" :animation="150" handle=".handle" ghost-class="phantom" v-model="formElements"
-            class="builder-elements">
+        <vue-draggable @end="handleElementDrag" :animation="150" handle=".handle" ghost-class="phantom"
+            v-model="formElements" class="builder-elements">
             <!-- @vue-ignore -->
             <component :class="{ selected: formElementSelected[i] }" @click="() => handleElementClick(i)"
                 ref="formElementComponent" v-for="(obj, i) in formElements" :is="getComponent(obj.type)" :self="obj"
@@ -124,23 +124,22 @@
         required: true,
     });
 
-    const formElementSelected = reactive<Record<number, boolean>>({});
+    const formElementSelected = defineModel<Record<number, boolean>>('selection', { default: {} });
     const formElementSelectedPrev = ref(-1);
 
     function resetFormElementSelection() {
-        console.log('reset')
         // @ts-ignore
-        Object.keys(formElementSelected).forEach(k => formElementSelected[k] = false);
+        Object.keys(formElementSelected.value).forEach(k => formElementSelected.value[k] = false);
     }
 
     function handleElementClick(index: number) {
         resetFormElementSelection();
 
         if (formElementSelectedPrev.value === index) {
-            formElementSelected[index] = false;
+            formElementSelected.value[index] = false;
             formElementSelectedPrev.value = -1;
         } else {
-            formElementSelected[index] = true;
+            formElementSelected.value[index] = true;
             formElementSelectedPrev.value = index;
         }
     }
@@ -153,10 +152,6 @@
                 formElementSelectedPrev.value = -1;
             }
         })
-    })
-
-    watch(formElementSelected,  v => {
-        console.log(v)
     })
 
     // 处理新表单元素的拖入
@@ -265,11 +260,40 @@
     })
 
     function handleElementDrag(e: SortableEvent) {
-        if (!e.oldIndex || !e.newIndex) return;
-        if (formElementSelected[e.oldIndex] === true) {
-            formElementSelected[e.newIndex] = true;
-            formElementSelected[e.oldIndex] = false;
+        if (e.oldIndex === undefined || e.newIndex === undefined) return;
+
+        const oldIndex = e.oldIndex;
+        const newIndex = e.newIndex;
+
+        if (formElementSelected.value[oldIndex] === true) {
+            formElementSelected.value[newIndex] = true;
+            formElementSelected.value[oldIndex] = false;
+            return;
         }
+
+        // 判断是否移动的范围包含被选中的元素
+
+        let containsSelected = false;
+        let selectedIndex = -1;
+
+        for (let i = Math.min(oldIndex, newIndex); i <= Math.max(oldIndex, newIndex); i++) {
+            if (formElementSelected.value[i] === true) {
+                selectedIndex = i;
+                containsSelected = true;
+                break;
+            }
+        }
+
+        if (!containsSelected) return;
+
+        let newSelectedIndex = -1;
+        const newIdx = (newIndex > oldIndex) ? (newIndex - 1) : newIndex;
+        const selectedAfterRemoval = (selectedIndex > oldIndex) ? (selectedIndex - 1) : selectedIndex;
+        // 根据拖动的方向来判断
+        newSelectedIndex = (newIndex < oldIndex ? (selectedAfterRemoval < newIdx) : (selectedAfterRemoval <= newIdx)) ? selectedAfterRemoval : (selectedAfterRemoval + 1);
+
+        formElementSelected.value[selectedIndex] = false;
+        formElementSelected.value[newSelectedIndex] = true;
     }
 </script>
 

@@ -6,7 +6,7 @@
   import { type FormElement, newElement } from '@/models/form/Form';
   import router from '@/router';
   import { BlockStack, Card, Checkbox, Dd, DescriptionList, Dt, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
-  import { reactive, ref, useTemplateRef } from 'vue';
+  import { computed, reactive, ref, Transition, useTemplateRef, watch } from 'vue';
   import BuilderForm from '@/components/builder/BuilderForm.vue';
   import useFormElementDraggable from '@/composables/useFormElementDraggable';
   import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
@@ -105,6 +105,17 @@
   const builderFormSettings = reactive<BuilderFormSettings>({
     showIndex: false
   });
+
+  const builderFormSelection = reactive<Record<number, boolean>>({});
+  const builderFormSelectedIndex = computed(() => {
+    for (let [index, value] of Object.entries(builderFormSelection)) {
+      if (value) return index;
+    }
+
+    return -1;
+  })
+
+  watch(builderFormSelectedIndex, v => console.log(v));
 </script>
 
 <template>
@@ -142,7 +153,8 @@
               </FormElementShortcutContainer>
             </template>
           </Card>
-          <BuilderForm v-model:settings="builderFormSettings" ref="builder_form_ref" v-model="formElements" />
+          <BuilderForm v-model:selection="builderFormSelection" v-model:settings="builderFormSettings"
+            ref="builder_form_ref" v-model="formElements" />
           <BlockStack gap="400">
             <Card>
               <CardTitle>
@@ -165,6 +177,11 @@
                 </Dd>
               </DescriptionList>
             </Card>
+            <Transition name="fade-from-right">
+              <Card>
+                <CardTitle>元素设置</CardTitle>
+              </Card>
+            </Transition>
           </BlockStack>
         </InlineGrid>
       </LayoutSection>
