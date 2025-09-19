@@ -6,12 +6,15 @@
   import { type FormElement, newElement } from '@/models/form/Form';
   import router from '@/router';
   import { BlockStack, Card, Checkbox, Dd, DescriptionList, Dt, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
-  import { computed, reactive, ref, Transition, useTemplateRef, watch } from 'vue';
+  import { computed, onMounted, reactive, ref, Transition, useTemplateRef, watch } from 'vue';
   import BuilderForm from '@/components/builder/BuilderForm.vue';
   import useFormElementDraggable from '@/composables/useFormElementDraggable';
   import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
   import Dlg from '@/components/ui/Dlg.vue';
   import type BuilderFormSettings from '@/types/BuilderFormSettings';
+  import GenericConfig from '@/components/form-elements/configuration/GenericConfig.vue';
+  import CardHeader from '@/components/ui/CardHeader.vue';
+  import { v4 } from 'uuid';
 
   const formElements = ref<FormElement[]>([
     newElement('choice', {
@@ -19,7 +22,8 @@
       hasOther: true,
       choices: [{
         label: 'aaa',
-        value: 'aaa'
+        value: 'aaa',
+        id: v4()
       }]
     }),
     newElement('select', {
@@ -90,8 +94,6 @@
     })
   ]);
 
-  const emptyFormElements = ref([]);
-
   async function save() {
 
   }
@@ -109,13 +111,34 @@
   const builderFormSelection = reactive<Record<number, boolean>>({});
   const builderFormSelectedIndex = computed(() => {
     for (let [index, value] of Object.entries(builderFormSelection)) {
-      if (value) return index;
+      if (value) return Number(index);
     }
 
     return -1;
   })
+  const builderFormSelectedElement = computed(() => {
+    if (builderFormSelectedIndex.value !== -1) {
+      return formElements.value[builderFormSelectedIndex.value];
+    }
+
+    return null;
+  })
 
   watch(builderFormSelectedIndex, v => console.log(v));
+
+  function resetBuilderFormSelectedIndex() {
+    // @ts-ignore
+    Object.keys(builderFormSelection).forEach(k => builderFormSelection[k] = false);
+  }
+
+  onMounted(() => {
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && builderFormSelectedIndex.value !== -1) {
+        e.preventDefault();
+        resetBuilderFormSelectedIndex();
+      }
+    })
+  })
 </script>
 
 <template>

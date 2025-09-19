@@ -1,6 +1,6 @@
 <script setup lang="ts">
-    import { Drag } from '@/icons';
     import { BlockStack, Box, Card, Icon, InlineStack, Text } from '@ownego/polaris-vue';
+    import DragHandle from '../ui/DragHandle.vue';
 
     const props = defineProps({
         title: {
@@ -35,7 +35,7 @@
                             {{ title }}
                         </Text>
                         <div class="spacer" />
-                        <Icon :source="Drag" class="handle" />
+                        <DragHandle />
                     </InlineStack>
                 </Box>
                 <Box padding-block-end="200" v-if="description">
@@ -80,12 +80,8 @@
 
     &.selected {
         .Polaris-ShadowBevel {
-            box-shadow: 0 0 0 4px rgba($color: black, $alpha: .3)
+            box-shadow: 0 0 0 4px rgba($color: black, $alpha: .2)
         }
     }
-}
-
-.handle {
-    cursor: move;
 }
 </style>

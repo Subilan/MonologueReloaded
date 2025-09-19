@@ -6,6 +6,7 @@ export interface ChoiceOption {
 	value: string;
 	helpText?: string;
 	renderChildren?: VNode | false;
+	id: string;
 }
 
 export interface ChoiceResult extends ResultBase {
