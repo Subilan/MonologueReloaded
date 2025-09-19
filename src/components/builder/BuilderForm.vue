@@ -1,6 +1,6 @@
 <template>
     <div v-if="formElements.length">
-        <vue-draggable @end="handleElementDrag" :animation="150" handle=".handle" ghost-class="phantom"
+        <vue-draggable @end="handleElementDrag" :animation="150" handle=".drag-handle" ghost-class="phantom"
             v-model="formElements" class="builder-elements">
             <!-- @vue-ignore -->
             <component :class="{ selected: formElementSelected[i] }" @click="() => handleElementClick(i)"
@@ -135,7 +135,8 @@
     function handleElementClick(index: number) {
         resetFormElementSelection();
 
-        if (formElementSelectedPrev.value === index) {
+        // 第二个条件是由于存在外部修改可能
+        if (formElementSelectedPrev.value === index && formElementSelected.value[index] !== false) {
             formElementSelected.value[index] = false;
             formElementSelectedPrev.value = -1;
         } else {
@@ -144,15 +145,16 @@
         }
     }
 
-    onMounted(() => {
-        document.addEventListener('click', e => {
-            const el = e.target as HTMLElement;
-            if (!el.matches('.builder-elements *')) {
-                resetFormElementSelection();
-                formElementSelectedPrev.value = -1;
-            }
-        })
-    })
+    // onMounted(() => {
+    //     document.addEventListener('click', e => {
+    //         const el = e.target as HTMLElement;
+    //         console.log(el)
+    //         if (!el.matches('.builder-elements *') && !el.matches('#element-configuration, #element-configuration *')) {
+    //             resetFormElementSelection();
+    //             formElementSelectedPrev.value = -1;
+    //         }
+    //     })
+    // })
 
     // 处理新表单元素的拖入
 
@@ -302,10 +304,6 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-}
-
-.phantom {
-    visibility: hidden;
 }
 
 .element {
