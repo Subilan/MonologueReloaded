@@ -178,8 +178,9 @@
               </DescriptionList>
             </Card>
             <Transition name="fade-from-right">
-              <Card>
-                <CardTitle>元素设置</CardTitle>
+              <Card id="element-configuration" v-if="builderFormSelectedElement !== null">
+                <CardHeader @close="resetBuilderFormSelectedIndex">元素设置</CardHeader>
+                <GenericConfig v-model="formElements[builderFormSelectedIndex]" />
               </Card>
             </Transition>
           </BlockStack>
