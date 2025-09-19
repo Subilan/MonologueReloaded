@@ -8,6 +8,7 @@ import TuneVariant from '@mdi/svg/svg/tune-variant.svg';
 import StarOutline from '@mdi/svg/svg/star-outline.svg';
 import Star from '@mdi/svg/svg/star.svg';
 import Drag from '@mdi/svg/svg/drag.svg';
+import Close from '@mdi/svg/svg/close.svg';
 
 
 export {
@@ -20,5 +21,6 @@ export {
     TuneVariant as IconSlider,
     StarOutline as IconStar,
     Star as IconStarFilled,
-    Drag
+    Drag,
+    Close
 }

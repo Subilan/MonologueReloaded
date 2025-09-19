@@ -1,0 +1,10 @@
+.fade-from-right-enter-active,
+.fade-from-right-leave-active {
+    transition: all .1s ease;
+}
+
+.fade-from-right-enter-from,
+.fade-from-right-leave-to {
+    transform: translateX(8px);
+    opacity: 0;
+}
