@@ -21,6 +21,7 @@ export type FormElementBase = {
 	description: string;
 	title: string;
 	identifier: string;
+	required: boolean;
 };
 
 // Type字段字面值与FormElement映射
@@ -43,6 +44,7 @@ export function newElement<T extends FormElementType>(type: T, config: FormEleme
 		config,
 		description,
 		title,
+		required: true,
 		identifier: v4()
 	} as FormElement<T>;
 }
