@@ -1,10 +1,6 @@
-export interface SelectOption {
-    label: string,
-    value: string,
-    helpText?: string
-}
+import type { WithId } from '@/models/base/basic';
 
 export interface Select {
 	helperText?: string;
-	options: SelectOption[];
+	options: WithId<{ label: string }>[];
 }
