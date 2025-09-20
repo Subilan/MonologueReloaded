@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-    import type { PartialExcept, TextInputCheck, TextInputFields } from '@/models/form/elements/TextInput';
+    import type { TextInputCheck, TextInputField } from '@/models/form/elements/TextInput';
     import { ref, watch, type PropType } from 'vue';
 
     const props = defineProps({
         config: {
-            type: Object as PropType<PartialExcept<TextInputFields, 'autoComplete'>>,
+            type: Object as PropType<Partial<TextInputField>>,
             default: {
                 autoComplete: 'off'
             }
