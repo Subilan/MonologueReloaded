@@ -1,18 +1,32 @@
 @use './transition.scss';
 
-:root, html.p-theme-light {
-    --p-font-family-sans: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'PingFang SC', 'Microsoft Yahei UI', '微软雅黑', sans-serif;
+:root,
+html.p-theme-light {
+	--p-font-family-sans: 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'PingFang SC', 'Microsoft Yahei UI', '微软雅黑', sans-serif;
 }
 
 div.Polaris-EmptyState__ImageContainer > img {
-    image-rendering: pixelated;
-    pointer-events: none;
+	image-rendering: pixelated;
+	pointer-events: none;
 }
 
 .spacer {
-    flex: 1;
+	flex: 1;
 }
 
 .phantom {
-    visibility: hidden;
+	visibility: hidden;
+}
+
+.vertical-list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	&:not(.no-border-bottom) {
+		> .Polaris-InlineGrid:not(:last-of-type) {
+			border-bottom: 1px solid var(--p-color-border);
+			padding-bottom: 16px;
+		}
+	}
 }

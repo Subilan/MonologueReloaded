@@ -4,17 +4,17 @@
             <Checkbox label="多选题" v-model="choiceConfig.config.isMultiple" />
             <Checkbox label="包含“其它”项" v-model="choiceConfig.config.hasOther" />
         </InlineStack>
-
-        <Button style="width: 100%;" variant="primary" @click="modalOptionConfig = true">编辑选项</Button>
+        <FullButton @click="modalOptionConfig = true">编辑选项</FullButton>
     </Config>
 
     <Dlg v-model="modalOptionConfig" title="编辑选项">
         <BlockStack gap="400">
-            <vue-draggable :animation="150" handle=".drag-handle" ghost-class="phantom" class="option-configs"
-                v-model="choiceConfig.config.choices">
-                <ChoiceOptionConfig v-for="option, i in choiceConfig.config.choices"
+            <vue-draggable v-if="choiceConfig.config.choices.length" :animation="150" handle=".drag-handle"
+                ghost-class="phantom" class="vertical-list" v-model="choiceConfig.config.choices">
+                <ChoiceOptionConfig @remove="handleRemove" v-for="option, i in choiceConfig.config.choices"
                     v-model="choiceConfig.config.choices[i]" :key="option.id" />
             </vue-draggable>
+            <em v-else>暂无选项，请先添加</em>
             <Button style="width: 100%;" variant="primary" @click="addOption">添加选项</Button>
         </BlockStack>
     </Dlg>
@@ -29,6 +29,7 @@
     import ChoiceOptionConfig from './ChoiceOptionConfig.vue';
     import { VueDraggable } from 'vue-draggable-plus';
     import { v4 } from 'uuid';
+    import FullButton from '@/components/ui/FullButton.vue';
 
     const modalOptionConfig = ref(false);
 
@@ -41,12 +42,13 @@
             id: v4()
         })
     }
-</script>
 
-<style lang="scss" scoped>
-.option-configs {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-</style>
+    function handleRemove(id: string) {
+        choiceConfig.value = {
+            ...choiceConfig.value, config: {
+                ...choiceConfig.value.config,
+                choices: choiceConfig.value.config.choices.filter(x => x.id !== id)
+            }
+        }
+    }
+</script>
