@@ -34,7 +34,7 @@
     <FormElement>
         <BlockStack align="center" gap="200">
             <ConfiguredTextField v-for="(cfg, i) in self.config.fields" :config="cfg" v-model:error="returnedErrors[i]"
-                v-model="models[i]" :check="self.config.checks[i]" />
+                v-model="models[i]" :check="cfg.regex" />
         </BlockStack>
     </FormElement>
 </template>

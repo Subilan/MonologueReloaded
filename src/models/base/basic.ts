@@ -10,3 +10,7 @@ export namespace Model {
 	export type Region = (typeof regions)[number];
 	export type Age = IntRange<0, 120>;
 }
+
+export type WithId<T> = {
+	id: string
+} & T

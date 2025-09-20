@@ -29,9 +29,18 @@
     newElement('select', {
       helperText: '昨天，今天，还是明天？',
       options: [
-        { label: 'Today', value: 'today' },
-        { label: 'Yesterday', value: 'yesterday' },
-        { label: 'Last 7 days', value: 'lastWeek' },
+        {
+          label: 'Today',
+          id: v4()
+        },
+        {
+          label: 'Tomorrow',
+          id: v4()
+        },
+        {
+          label: 'Yesterday',
+          id: v4()
+        }
       ]
     }),
     newElement('text_input', {
@@ -40,15 +49,16 @@
           helperText: '在此输入',
           placeholder: '占位符',
           multiline: 5,
-          autoComplete: 'off'
+          autoComplete: 'off',
+          regex: [
+            {
+              r: /^[A-Za-z0-9]+$/,
+              error: 'regex1 test failed'
+            }
+          ],
+          id: v4()
         }
       ],
-      checks: [
-        [{
-          r: /^[A-Za-z0-9]+$/,
-          error: 'regex1 test failed'
-        },]
-      ]
     }),
     newElement('paragraph_input', {
       template: `Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`
@@ -57,28 +67,29 @@
     newElement('text_input', {
       fields: [
         {
-          autoComplete: 'off'
+          autoComplete: 'off',
+          id: v4()
+
         },
         {
           autoComplete: 'off',
-          multiline: 6
+          multiline: 6,
+          id: v4()
+
         },
         {
           autoComplete: 'off',
-          label: '只能是数字'
+          label: '只能是数字',
+          regex: [{
+            r: /^\d+$/,
+            error: '不全为数字'
+          }],
+          id: v4()
         },
         {
-          autoComplete: 'off'
+          autoComplete: 'off',
+          id: v4()
         },
-      ],
-      checks: [
-        [],
-        [],
-        [{
-          r: /^\d+$/,
-          error: '不全为数字'
-        }],
-        []
       ]
     }),
     newElement('slider', {
