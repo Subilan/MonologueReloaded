@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import { BlockStack, Checkbox, InlineStack, RadioButton, TextField } from '@ownego/polaris-vue';
+    import { BlockStack, Box, Checkbox, InlineStack, RadioButton, TextField } from '@ownego/polaris-vue';
     import FormElement from './FormElement.vue';
     import { reactive, ref, watch, type PropType } from 'vue';
     import type { ChoiceResult } from '@/models/form/elements/Choice';
@@ -57,17 +57,26 @@
     <FormElement>
         <BlockStack>
             <template v-if="self.config.isMultiple">
-                <Checkbox :label="x.label" :help-text="x.helpText" v-for="x in self.config.choices"
-                    v-model="isChecked[x.id]" />
+                <Checkbox :label="x.label" v-for="x in self.config.choices" v-model="isChecked[x.id]">
+                    <template #helpText>
+                        {{ x.helpText }}
+                    </template>
+                </Checkbox>
+                <Checkbox label="其它" v-model="isChecked['other']" />
             </template>
             <template v-else>
-                <RadioButton :name="`radio-for-${self.identifier}`" :label="x.label" :help-text="x.helpText"
-                    :value="x.id" v-for="x in self.config.choices" v-model="singleChoice" />
+                <RadioButton :name="`radio-for-${self.identifier}`" :label="x.label" :value="x.id"
+                    v-for="x in self.config.choices" v-model="singleChoice">
+                    <template #helpText>
+                        {{ x.helpText }}
+                    </template>
+                </RadioButton>
+                <RadioButton :name="`radio-for-${self.identifier}`" label="其它" value="other" v-model="singleChoice" />
             </template>
-            <InlineStack gap="400" v-if="self.config.hasOther">
-                <Checkbox label="其它" v-model="isChecked['other']" />
-                <TextField size="slim" v-model="otherValue" auto-complete="off" v-if="isChecked['other']" :placeholder="self.config.otherLabel || '输入你的答案'" />
-            </InlineStack>
+            <Box padding-block-start="200" v-if="isChecked['other']">
+                <TextField size="slim" v-model="otherValue" auto-complete="off"
+                    :placeholder="self.config.otherLabel || '输入你的答案'" />
+            </Box>
         </BlockStack>
     </FormElement>
 </template>
