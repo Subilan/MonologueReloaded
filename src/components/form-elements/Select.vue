@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-    import type { SelectOption } from '@/models/form/elements/Select';
     import { computed, ref, type PropType } from 'vue';
     import { Select } from '@ownego/polaris-vue';
     import FormElement from './FormElement.vue';
     import type { FormEl, SimpleResult } from '@/models/form/Form';
+    import { PleaseSelectOption } from '@/static/Common';
 
     const props = defineProps({
         self: {
@@ -13,15 +13,17 @@
     });
 
     const selected = ref('');
-    const allowEmpty = props.self.config.options.some(x => x.value === '');
+    const allowEmpty = props.self.config.options.some(x => x.label === '');
 
     const finalOptions = computed(() => {
-        let base = props.self.config.options;
+        let base = props.self.config.options.map(x => {
+            return {
+                label: x.label,
+                value: x.label
+            }
+        });
 
-        if (!allowEmpty) base.push({
-            label: '请选择',
-            value: ''
-        })
+        if (props.self.required) base.push(PleaseSelectOption)
 
         return base;
     });
