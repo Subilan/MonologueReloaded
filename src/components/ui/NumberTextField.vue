@@ -22,6 +22,10 @@
         },
         suffix: {
             type: String
+        },
+        error: {
+            type: Boolean,
+            default: false,
         }
     })
 
@@ -30,5 +34,5 @@
 </script>
 
 <template>
-    <TextField :label="label" :suffix="suffix" :help-text="helpText" auto-complete="off" v-model="val" :min="min" :max="max" :step="step" type="number"/>
+    <TextField :error="error" :label="label" :suffix="suffix" :help-text="helpText" auto-complete="off" v-model="val" :min="min" :max="max" :step="step" type="number"/>
 </template>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { TextInputCheck, TextInputField } from '@/models/form/elements/TextInput';
+import { TextfieldRegexPreset, TextfieldRegexPresetFailMessage } from '@/static/TextfieldRegexPreset';
 import { ref, watch, type PropType } from 'vue';
 
 const props = defineProps({
@@ -18,21 +19,38 @@ const props = defineProps({
 const error = ref('');
 
 function doCheck(value: string) {
-    if (props.check) {
-        // 总是返回第一个不满足的正则的错误
-        for (let check of props.check) {
-            try {
-                if (!RegExp(check.r).test(value)) {
-                    error.value = check.error;
-                    break;
-                }
-            } catch (e) {
-                // 跳过无效正则表达式
-                continue;
-            }
+    if (props.config.type === undefined || props.config.type === '' || props.config.type === 'password') return;
+
+    if (props.config.type === 'text') {
+        if (value.trim().length === 0) {
+            if (props.config.required) error.value = '此项必填';
+            else error.value = '';
+
+            return;
         }
 
-        error.value = '';
+        if (props.check) {
+            // 总是返回第一个不满足的正则的错误
+            for (let check of props.check) {
+                try {
+                    if (!RegExp(check.r).test(value)) {
+                        error.value = check.error;
+                        return;
+                    }
+                } catch (e) {
+                    // 跳过无效正则表达式
+                    continue;
+                }
+            }
+
+            error.value = '';
+        }
+    } else {
+        if (!TextfieldRegexPreset[props.config.type].test(value)) {
+            error.value = TextfieldRegexPresetFailMessage[props.config.type];
+        } else {
+            error.value = '';
+        }
     }
 }
 
@@ -49,12 +67,15 @@ function onChange(v: string) {
 const model = defineModel();
 const errorModel = defineModel('error');
 
-watch(error, v => errorModel.value = error.value);
+watch(error, v => {
+    errorModel.value = v;
+});
 </script>
 
 <template>
     <TextField @input="onInput" @change="onChange" :label="config.label" :multiline="config.multiline"
-        :auto-complete="config.autoComplete" :type="config.type" :max="config.max" :help-text="config.helperText"
-        :min="config.min" :max-length="config.maxLength" :placeholder="config.placeholder" v-model="model"
-        :show-character-count="config.showCharacterCount" :error="error" />
+        :auto-complete="config.autoComplete" :type="config.type" :max="config.max"
+        :help-text="error === '' ? config.helperText : undefined" :min="config.min" :max-length="config.maxLength"
+        :placeholder="config.placeholder" v-model="model" :show-character-count="config.showCharacterCount"
+        :error="error" />
 </template>

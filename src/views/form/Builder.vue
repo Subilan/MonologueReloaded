@@ -1,155 +1,159 @@
 <script setup lang="ts">
-  import CardSectionTitle from '@/components/CardSectionTitle.vue';
-  import CardTitle from '@/components/CardTitle.vue';
-  import FormElementShortcut from '@/components/FormElementShortcut.vue';
-  import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
-  import { type FormElement, newElement } from '@/models/form/Form';
-  import router from '@/router';
-  import { BlockStack, Card, Checkbox, Dd, DescriptionList, Dt, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
-  import { computed, onMounted, reactive, ref, Transition, useTemplateRef, watch } from 'vue';
-  import BuilderForm from '@/components/builder/BuilderForm.vue';
-  import useFormElementDraggable from '@/composables/useFormElementDraggable';
-  import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
-  import Dlg from '@/components/ui/Dlg.vue';
-  import type BuilderFormSettings from '@/types/BuilderFormSettings';
-  import GenericConfig from '@/components/form-elements/configuration/GenericConfig.vue';
-  import CardHeader from '@/components/ui/CardHeader.vue';
-  import { v4 } from 'uuid';
+import CardSectionTitle from '@/components/CardSectionTitle.vue';
+import CardTitle from '@/components/CardTitle.vue';
+import FormElementShortcut from '@/components/FormElementShortcut.vue';
+import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
+import { type FormElement, newElement } from '@/models/form/Form';
+import router from '@/router';
+import { BlockStack, Card, Checkbox, Dd, DescriptionList, Dt, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
+import { computed, onMounted, reactive, ref, Transition, useTemplateRef, watch } from 'vue';
+import BuilderForm from '@/components/builder/BuilderForm.vue';
+import useFormElementDraggable from '@/composables/useFormElementDraggable';
+import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
+import Dlg from '@/components/ui/Dlg.vue';
+import type BuilderFormSettings from '@/types/BuilderFormSettings';
+import GenericConfig from '@/components/form-elements/configuration/GenericConfig.vue';
+import CardHeader from '@/components/ui/CardHeader.vue';
+import { v4 } from 'uuid';
 
-  const formElements = ref<FormElement[]>([
-    newElement('choice', {
-      isMultiple: true,
-      hasOther: true,
-      choices: [{
-        label: 'aaa',
-        value: 'aaa',
+const formElements = ref<FormElement[]>([
+  newElement('choice', {
+    isMultiple: true,
+    hasOther: true,
+    choices: [{
+      label: 'aaa',
+      value: 'aaa',
+      id: v4()
+    }]
+  }),
+  newElement('select', {
+    helperText: '昨天，今天，还是明天？',
+    options: [
+      {
+        label: 'Today',
         id: v4()
-      }]
-    }),
-    newElement('select', {
-      helperText: '昨天，今天，还是明天？',
-      options: [
-        {
-          label: 'Today',
-          id: v4()
-        },
-        {
-          label: 'Tomorrow',
-          id: v4()
-        },
-        {
-          label: 'Yesterday',
-          id: v4()
-        }
-      ]
-    }),
-    newElement('text_input', {
-      fields: [
-        {
-          helperText: '在此输入',
-          placeholder: '占位符',
-          multiline: 5,
-          autoComplete: 'off',
-          regex: [
-            {
-              r: /^[A-Za-z0-9]+$/,
-              error: 'regex1 test failed'
-            }
-          ],
-          id: v4()
-        }
-      ],
-    }),
-    newElement('paragraph_input', {
-      template: `Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`
-
-    }),
-    newElement('text_input', {
-      fields: [
-        {
-          autoComplete: 'off',
-          id: v4()
-
-        },
-        {
-          autoComplete: 'off',
-          multiline: 6,
-          id: v4()
-
-        },
-        {
-          autoComplete: 'off',
-          label: '只能是数字',
-          regex: [{
-            r: /^\d+$/,
-            error: '不全为数字'
-          }],
-          id: v4()
-        },
-        {
-          autoComplete: 'off',
-          id: v4()
-        },
-      ]
-    }),
-    newElement('slider', {
-      isRange: false,
-      output: true,
-      maxValue: 5,
-      suffix: 'test suffix',
-      prefix: 'test prefix',
-    }),
-    newElement('rating', {
-      ratingMessages: ['很差', '较差', '一般', '较好', '很好'],
-      levels: 5
-    })
-  ]);
-
-  async function save() {
-
-  }
-
-  const formElementDraggable = useFormElementDraggable();
-
-  const builderFormRef = useTemplateRef('builder_form_ref');
-
-  const modalSettings = ref(false);
-
-  const builderFormSettings = reactive<BuilderFormSettings>({
-    showIndex: false
-  });
-
-  const builderFormSelection = reactive<Record<number, boolean>>({});
-  const builderFormSelectedIndex = computed(() => {
-    for (let [index, value] of Object.entries(builderFormSelection)) {
-      if (value) return Number(index);
-    }
-
-    return -1;
-  })
-  const builderFormSelectedElement = computed(() => {
-    if (builderFormSelectedIndex.value !== -1) {
-      return formElements.value[builderFormSelectedIndex.value];
-    }
-
-    return null;
-  })
-
-  watch(builderFormSelectedIndex, v => console.log(v));
-
-  function resetBuilderFormSelectedIndex() {
-    // @ts-ignore
-    Object.keys(builderFormSelection).forEach(k => builderFormSelection[k] = false);
-  }
-
-  onMounted(() => {
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && builderFormSelectedIndex.value !== -1) {
-        e.preventDefault();
-        resetBuilderFormSelectedIndex();
+      },
+      {
+        label: 'Tomorrow',
+        id: v4()
+      },
+      {
+        label: 'Yesterday',
+        id: v4()
       }
-    })
+    ]
+  }),
+  newElement('text_input', {
+    fields: [
+      {
+        helperText: '在此输入',
+        placeholder: '占位符',
+        multiline: 5,
+        autoComplete: 'off',
+        regex: [
+          {
+            r: '^[A-Za-z0-9]+$',
+            error: 'regex1 test failed',
+            id: v4()
+          }
+        ],
+        id: v4()
+      }
+    ],
+  }),
+  newElement('paragraph_input', {
+    template: `Hello, my name is [type=text,required] and I am from [], I'm [type=number,min=1,max=120,required]. My favorite food is [type=select,options{apple:'orange juice':'bla bla bla'}] and my favorite singer is [].`
+
+  }),
+  newElement('text_input', {
+    fields: [
+      {
+        autoComplete: 'off',
+        id: v4()
+
+      },
+      {
+        autoComplete: 'off',
+        multiline: 6,
+        id: v4()
+
+      },
+      {
+        autoComplete: 'off',
+        label: '只能是数字',
+        regex: [
+          {
+            r: '^\\d+$',
+            error: '不全为数字',
+            id: v4()
+          }
+        ],
+        id: v4()
+      },
+      {
+        autoComplete: 'off',
+        id: v4()
+      },
+    ]
+  }),
+  newElement('slider', {
+    isRange: false,
+    output: true,
+    maxValue: 5,
+    suffix: 'test suffix',
+    prefix: 'test prefix',
+  }),
+  newElement('rating', {
+    ratingMessages: ['很差', '较差', '一般', '较好', '很好'],
+    levels: 5
   })
+]);
+
+async function save() {
+
+}
+
+const formElementDraggable = useFormElementDraggable();
+
+const builderFormRef = useTemplateRef('builder_form_ref');
+
+const modalSettings = ref(false);
+
+const builderFormSettings = reactive<BuilderFormSettings>({
+  showIndex: false
+});
+
+const builderFormSelection = reactive<Record<number, boolean>>({});
+const builderFormSelectedIndex = computed(() => {
+  for (let [index, value] of Object.entries(builderFormSelection)) {
+    if (value) return Number(index);
+  }
+
+  return -1;
+})
+const builderFormSelectedElement = computed(() => {
+  if (builderFormSelectedIndex.value !== -1) {
+    return formElements.value[builderFormSelectedIndex.value];
+  }
+
+  return null;
+})
+
+watch(builderFormSelectedIndex, v => console.log(v));
+
+function resetBuilderFormSelectedIndex() {
+  // @ts-ignore
+  Object.keys(builderFormSelection).forEach(k => builderFormSelection[k] = false);
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && builderFormSelectedIndex.value !== -1) {
+      e.preventDefault();
+      resetBuilderFormSelectedIndex();
+    }
+  })
+})
 </script>
 
 <template>

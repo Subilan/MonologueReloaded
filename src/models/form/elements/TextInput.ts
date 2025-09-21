@@ -5,19 +5,24 @@ export interface TextInputCheck {
 	error: string;
 }
 
+export type TextInputType = 'number' | 'text' | 'url' | 'email' | 'tel' | 'time' | 'integer' | 'password' | 'currency';
+
+export type TextInputTypeRegexPreset = Exclude<TextInputType, 'text' | 'password'>;
+
 export interface TextInputField {
-	type: 'number' | 'text' | 'url' | 'email' | 'tel' | 'time' | 'integer' | 'password' | 'date' | 'datetime-local' | 'month' | 'week' | 'currency' | '';
+	type: TextInputType | '';
 	max: number;
 	min: number;
 	minLength: number;
 	maxLength: number;
 	placeholder: string;
 	label: string;
-	autoComplete: 'off' | 'on';
+	autoComplete: 'off' | 'on';w
 	multiline: number;
 	helperText: string;
 	showCharacterCount: boolean;
-	regex: TextInputCheck[];
+	regex: WithId<TextInputCheck>[];
+	required: boolean;
 }
 
 export interface TextInput {
