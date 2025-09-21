@@ -8,14 +8,21 @@ const props = defineProps({
     },
     sub: {
         type: String
+    },
+    label: {
+        type: Boolean,
+        default: false,
     }
 })
 </script>
 
 <template>
-    <Box :padding-block-end="noPaddingBlockEnd ? '0' : '200'">
+    <Box :padding-block-end="noPaddingBlockEnd ? '0' : (label ? '100' : '200')">
         <InlineStack block-align="center" gap="200">
-            <Text variant="headingMd" as="h2">
+            <Text v-if="label" variant="bodyMd" as="h2">
+                <slot />
+            </Text>
+            <Text v-else variant="headingMd" as="h2">
                 <slot />
             </Text>
             <Text v-if="sub" variant="bodySm" as="p" tone="subdued">

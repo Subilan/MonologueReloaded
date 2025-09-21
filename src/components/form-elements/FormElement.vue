@@ -1,22 +1,29 @@
 <script setup lang="ts">
-    import { BlockStack, Box, Card, Icon, InlineStack, Text } from '@ownego/polaris-vue';
-    import DragHandle from '../ui/DragHandle.vue';
+import { Badge, BlockStack, Box, Card, Icon, InlineStack, Text } from '@ownego/polaris-vue';
+import DragHandle from '../ui/DragHandle.vue';
+import useBuilderFormSettings from '@/composables/useBuilderFormSettings';
+import DisplayNumber from '../DisplayNumber.vue';
 
-    const props = defineProps({
-        title: {
-            type: String
-        },
-        index: {
-            type: Number
-        },
-        description: {
-            type: String
-        },
-        classNames: {
-            type: String,
-            default: ''
-        }
-    });
+const props = defineProps({
+    title: {
+        type: String
+    },
+    index: {
+        type: Number,
+    },
+    description: {
+        type: String
+    },
+    required: {
+        type: Boolean,
+    },
+    classNames: {
+        type: String,
+        default: ''
+    }
+});
+
+const builderFormSettings = useBuilderFormSettings();
 </script>
 
 <template>
@@ -27,13 +34,27 @@
             </div>
             <Card ref="card">
                 <Box padding-block-end="400">
-                    <InlineStack gap="400">
+                    <InlineStack :gap="builderFormSettings.indexFormat === 'hanzi' ? 0 : 400" block-align="center"
+                        :class="builderFormSettings.boldTitle ? {} : { 'no-bold': true }">
                         <Text variant="headingLg" as="h2" v-if="index">
-                            {{ index }}
+                            <DisplayNumber :value="index"
+                                :config="{ format: builderFormSettings.indexFormat, configuration: builderFormSettings.indexFormatCustomization }" />
                         </Text>
-                        <Text variant="headingLg" as="h2">
-                            {{ title }}
-                        </Text>
+                        <InlineStack gap="200" block-align="center">
+                            <Text variant="headingLg" as="h2">
+                                {{ title }}
+                            </Text>
+                            <template v-if="required">
+                                <template v-if="builderFormSettings.requiredIndicatorStyle === 'asterisk'">
+                                    <Text variant="headingLg" as="h2">
+                                        <span style="color: red;">*</span>
+                                    </Text>
+                                </template>
+                                <template v-else>
+                                    <Badge>必填</Badge>
+                                </template>
+                            </template>
+                        </InlineStack>
                         <div class="spacer" />
                         <DragHandle />
                     </InlineStack>
@@ -82,6 +103,12 @@
         .Polaris-ShadowBevel {
             box-shadow: 0 0 0 4px rgba($color: black, $alpha: .2)
         }
+    }
+}
+
+.no-bold {
+    * {
+        font-weight: normal !important;
     }
 }
 </style>

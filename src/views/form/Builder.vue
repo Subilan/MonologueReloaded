@@ -5,16 +5,18 @@ import FormElementShortcut from '@/components/FormElementShortcut.vue';
 import FormElementShortcutContainer from '@/components/FormElementShortcutContainer.vue';
 import { type FormElement, newElement } from '@/models/form/Form';
 import router from '@/router';
-import { BlockStack, Card, Checkbox, Dd, DescriptionList, Dt, Icon, InlineGrid, Layout, LayoutSection, Page, Tooltip } from '@ownego/polaris-vue';
+import { BlockStack, Card, Checkbox, Dd, DescriptionList, Dt, FormLayout, Icon, InlineGrid, Layout, LayoutSection, Page, Select, Tooltip } from '@ownego/polaris-vue';
 import { computed, onMounted, reactive, ref, Transition, useTemplateRef, watch } from 'vue';
 import BuilderForm from '@/components/builder/BuilderForm.vue';
 import useFormElementDraggable from '@/composables/useFormElementDraggable';
 import { FormElementGroupMap, FormElementInfo } from '@/static/FormElement';
 import Dlg from '@/components/ui/Dlg.vue';
-import type BuilderFormSettings from '@/types/BuilderFormSettings';
 import GenericConfig from '@/components/form-elements/configuration/GenericConfig.vue';
 import CardHeader from '@/components/ui/CardHeader.vue';
 import { v4 } from 'uuid';
+import { BFIndexFormatOptions, BFIndicatorStyleOptions, BuilderFormSettingsDefault } from '@/static/BuilderFormSettings';
+import useBuilderFormSettings from '@/composables/useBuilderFormSettings';
+import PopoverButton from '@/components/ui/PopoverButton.vue';
 
 const formElements = ref<FormElement[]>([
   newElement('choice', {
@@ -119,9 +121,14 @@ const builderFormRef = useTemplateRef('builder_form_ref');
 
 const modalSettings = ref(false);
 
-const builderFormSettings = reactive<BuilderFormSettings>({
-  showIndex: false
-});
+const builderFormSettings = useBuilderFormSettings();
+
+watch(() => builderFormSettings.indexFormat, v => {
+  if (v === 'hanzi') {
+    // 默认值
+    builderFormSettings.indexFormatCustomization['lowercase'] = true;
+  }
+})
 
 const builderFormSelection = reactive<Record<number, boolean>>({});
 const builderFormSelectedIndex = computed(() => {
@@ -191,8 +198,7 @@ onMounted(() => {
               </FormElementShortcutContainer>
             </template>
           </Card>
-          <BuilderForm v-model:selection="builderFormSelection" v-model:settings="builderFormSettings"
-            ref="builder_form_ref" v-model="formElements" />
+          <BuilderForm v-model:selection="builderFormSelection" ref="builder_form_ref" v-model="formElements" />
           <BlockStack gap="400">
             <Card>
               <CardTitle>
@@ -231,8 +237,36 @@ onMounted(() => {
     <CardTitle>
       基础设置
     </CardTitle>
-    <InlineGrid columns="1fr 1fr" gap="400">
+    <BlockStack gap="400">
       <Checkbox v-model="builderFormSettings.showIndex" label="显示编号" help-text="是否自动为表单元素编号并显示在标题的左侧" />
-    </InlineGrid>
+      <Checkbox v-model="builderFormSettings.boldTitle" label="粗体标题" help-text="是否将标题显示为粗体" />
+      <Box>
+        <CardTitle label sub="设置必填项目的标识所采用的形式">
+          必填标识样式
+        </CardTitle>
+        <Select :options="BFIndicatorStyleOptions" v-model="builderFormSettings.requiredIndicatorStyle" />
+      </Box>
+      <Box>
+        <CardTitle label sub="设置编号时使用的数字格式">
+          编号格式
+        </CardTitle>
+        <InlineGrid columns="1fr auto" :gap="400">
+          <Select :options="BFIndexFormatOptions" v-model="builderFormSettings.indexFormat"
+            v-if="builderFormSettings.showIndex" />
+          <PopoverButton v-if="['arabic', 'roman', 'alphabet', 'hanzi'].includes(builderFormSettings.indexFormat)">
+            自定义
+            <template #content>
+              <VerticalLayout>
+                <Checkbox v-model="builderFormSettings.indexFormatCustomization['lowercase']"
+                  v-if="['alphabet', 'roman', 'hanzi'].includes(builderFormSettings.indexFormat)" label="小写"
+                  help-text="以小写呈现指定格式" />
+                <Checkbox v-model="builderFormSettings.indexFormatCustomization['dotsign']" label="带点"
+                  :help-text="`是否在编号后紧跟一个${builderFormSettings.indexFormat === 'hanzi' ? '顿号' : '点号'}`" />
+              </VerticalLayout>
+            </template>
+          </PopoverButton>
+        </InlineGrid>
+      </Box>
+    </BlockStack>
   </Dlg>
 </template>
