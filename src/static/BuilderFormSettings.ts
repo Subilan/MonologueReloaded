@@ -39,7 +39,7 @@ export const BuilderFormSettingsDefault: BuilderFormSettings = {
 	boldTitle: true,
 	requiredIndicatorStyle: 'asterisk',
 	indexFormat: 'arabic',
-	indexFormatCustomization: {}
+	indexFormatConfig: {}
 };
 
 export default interface BuilderFormSettings {
@@ -47,5 +47,5 @@ export default interface BuilderFormSettings {
 	boldTitle: boolean;
 	requiredIndicatorStyle: BFRequiredIndicatorStyle;
 	indexFormat: NumberFormat;
-	indexFormatCustomization: Partial<NumberComponentConfiguration['configuration']>;
+	indexFormatConfig: Partial<NumberComponentConfiguration['configuration']>;
 }

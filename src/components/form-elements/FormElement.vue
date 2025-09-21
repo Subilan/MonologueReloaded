@@ -34,11 +34,11 @@ const builderFormSettings = useBuilderFormSettings();
             </div>
             <Card ref="card">
                 <Box padding-block-end="400">
-                    <InlineStack :gap="builderFormSettings.indexFormat === 'hanzi' ? 0 : 400" block-align="center"
+                    <InlineStack :gap="builderFormSettings.indexFormat === 'hanzi' && builderFormSettings.indexFormatConfig['dotsign'] ? 0 : 400" block-align="center"
                         :class="builderFormSettings.boldTitle ? {} : { 'no-bold': true }">
                         <Text variant="headingLg" as="h2" v-if="index">
                             <DisplayNumber :value="index"
-                                :config="{ format: builderFormSettings.indexFormat, configuration: builderFormSettings.indexFormatCustomization }" />
+                                :config="{ format: builderFormSettings.indexFormat, configuration: builderFormSettings.indexFormatConfig }" />
                         </Text>
                         <InlineStack gap="200" block-align="center">
                             <Text variant="headingLg" as="h2">

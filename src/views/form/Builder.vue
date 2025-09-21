@@ -126,7 +126,7 @@ const builderFormSettings = useBuilderFormSettings();
 watch(() => builderFormSettings.indexFormat, v => {
   if (v === 'hanzi') {
     // 默认值
-    builderFormSettings.indexFormatCustomization['lowercase'] = true;
+    builderFormSettings.indexFormatConfig['lowercase'] = true;
   }
 })
 
@@ -257,10 +257,10 @@ onMounted(() => {
             自定义
             <template #content>
               <VerticalLayout>
-                <Checkbox v-model="builderFormSettings.indexFormatCustomization['lowercase']"
+                <Checkbox v-model="builderFormSettings.indexFormatConfig['lowercase']"
                   v-if="['alphabet', 'roman', 'hanzi'].includes(builderFormSettings.indexFormat)" label="小写"
                   help-text="以小写呈现指定格式" />
-                <Checkbox v-model="builderFormSettings.indexFormatCustomization['dotsign']" label="带点"
+                <Checkbox v-model="builderFormSettings.indexFormatConfig['dotsign']" label="带点"
                   :help-text="`是否在编号后紧跟一个${builderFormSettings.indexFormat === 'hanzi' ? '顿号' : '点号'}`" />
               </VerticalLayout>
             </template>
