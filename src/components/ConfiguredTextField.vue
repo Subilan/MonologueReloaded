@@ -16,6 +16,10 @@ const props = defineProps({
     }
 })
 
+watch(() => props.config.type, _ => {
+    doCheck(model.value);
+})
+
 const error = ref('');
 
 function doCheck(value: string) {
@@ -64,7 +68,7 @@ function onChange(v: string) {
     doCheck(v);
 }
 
-const model = defineModel();
+const model = defineModel<string>({ required: true });
 const errorModel = defineModel('error');
 
 watch(error, v => {
