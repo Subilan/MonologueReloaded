@@ -23,7 +23,7 @@
             }
         });
 
-        if (props.self.required) base.push(PleaseSelectOption)
+        base.push(PleaseSelectOption)
 
         return base;
     });
