@@ -23,7 +23,10 @@ watch(() => props.config.type, _ => {
 const error = ref('');
 
 function doCheck(value: string) {
-    if (props.config.type === undefined || props.config.type === '' || props.config.type === 'password') return;
+    if (props.config.type === undefined || props.config.type === '' || props.config.type === 'password') {
+        error.value = '';
+        return;
+    }
 
     if (props.config.type === 'text') {
         if (value.trim().length === 0) {
