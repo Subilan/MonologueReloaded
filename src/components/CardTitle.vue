@@ -28,6 +28,8 @@ const props = defineProps({
             <Text v-if="sub" variant="bodySm" as="p" tone="subdued">
                 {{ sub }}
             </Text>
+            <div class="spacer"></div>
+            <slot name="right"/>
         </InlineStack>
     </Box>
 </template>
