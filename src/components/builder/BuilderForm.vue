@@ -5,7 +5,7 @@
             <!-- @vue-ignore -->
             <component :class="{ selected: formElementSelected[i] }" @click="() => handleElementClick(i)"
                 ref="formElementComponent" v-for="(obj, i) in formElements" :is="getComponent(obj.type)" :self="obj"
-                :index="settings.showIndex ? i + 1 : undefined" :title="obj.title || 'default title'"
+                :index="settings.showIndex ? i + 1 : undefined" :title="obj.title || '无标题'"
                 :description="obj.description" :required="obj.required" />
         </vue-draggable>
 
