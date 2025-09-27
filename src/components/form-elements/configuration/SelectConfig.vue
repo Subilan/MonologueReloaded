@@ -25,33 +25,33 @@
     </template>
 
 <script lang="ts" setup>
-    import type { FormElement } from '@/models/form/Form';
-    import Config from './Config.vue';
-    import { BlockStack, TextField } from '@ownego/polaris-vue';
-    import Dlg from '@/components/ui/Dlg.vue';
-    import { ref } from 'vue';
-    import FullButton from '@/components/ui/FullButton.vue';
-    import { VueDraggable } from 'vue-draggable-plus';
-    import DragHandle from '@/components/ui/DragHandle.vue';
-    import { Close } from '@/icons';
-    import { v4 } from 'uuid';
+import type { FormElement } from '@/models/form/Form';
+import Config from './Config.vue';
+import { BlockStack, TextField } from '@ownego/polaris-vue';
+import Dlg from '@/components/ui/Dlg.vue';
+import { ref } from 'vue';
+import FullButton from '@/components/ui/FullButton.vue';
+import { VueDraggable } from 'vue-draggable-plus';
+import DragHandle from '@/components/ui/DragHandle.vue';
+import { Close } from '@/icons';
+import { v4 } from 'uuid';
 
-    const selectConfig = defineModel<FormElement<'select'>>({ required: true });
+const selectConfig = defineModel<FormElement<'select'>>({ required: true });
 
-    const modalSelectOptionConfig = ref(false);
+const modalSelectOptionConfig = ref(false);
 
-    function addOption() {
-        selectConfig.value.config.options.push({
-            label: '',
-            id: v4()
-        })
-    }
+function addOption() {
+    selectConfig.value.config.options.push({
+        label: '',
+        id: v4()
+    })
+}
 
-    function remove(id: string) {
-        selectConfig.value = {
-            ...selectConfig.value, config: {
-                ...selectConfig.value.config, options: selectConfig.value.config.options.filter(x => x.id !== id)
-            }
+function remove(id: string) {
+    selectConfig.value = {
+        ...selectConfig.value, config: {
+            ...selectConfig.value.config, options: selectConfig.value.config.options.filter(x => x.id !== id)
         }
     }
+}
 </script>

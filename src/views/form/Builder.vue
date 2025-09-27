@@ -17,6 +17,7 @@ import { v4 } from 'uuid';
 import { BFIndexFormatOptions, BFIndicatorStyleOptions, BuilderFormSettingsDefault } from '@/static/BuilderFormSettings';
 import useBuilderFormSettings from '@/composables/useBuilderFormSettings';
 import PopoverButton from '@/components/ui/PopoverButton.vue';
+import VerticalLayout from '@/components/ui/VerticalLayout.vue';
 
 const formElements = ref<FormElement[]>([
   newElement('choice', {
@@ -246,13 +247,12 @@ onMounted(() => {
         </CardTitle>
         <Select :options="BFIndicatorStyleOptions" v-model="builderFormSettings.requiredIndicatorStyle" />
       </Box>
-      <Box>
+      <Box v-if="builderFormSettings.showIndex">
         <CardTitle label sub="设置编号时使用的数字格式">
           编号格式
         </CardTitle>
         <InlineGrid columns="1fr auto" :gap="400">
-          <Select :options="BFIndexFormatOptions" v-model="builderFormSettings.indexFormat"
-            v-if="builderFormSettings.showIndex" />
+          <Select :options="BFIndexFormatOptions" v-model="builderFormSettings.indexFormat" />
           <PopoverButton v-if="['arabic', 'roman', 'alphabet', 'hanzi'].includes(builderFormSettings.indexFormat)">
             自定义
             <template #content>
